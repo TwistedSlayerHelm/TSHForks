@@ -1376,8 +1376,9 @@ begin
       begin
         item := 'Xeric''s talisman';
         wait(250,500);
-        if Inventory.ClickItem(item, 'Rub') then
+        if Inventory.ContainsItem('Xeric''s talisman') then
         begin
+          Inventory.ClickItem(item, 'Rub');
           WaitUntil(Mainscreen.HasInterface(), 10, 5000);
           b := ([219,92,293,101]);
           Mouse.Click(b, MOUSE_LEFT);
@@ -1494,7 +1495,8 @@ begin
       WriteLn('Out of xeric''s talisman charges. Skipping patch.');
       Self.CurrentPatch.Skip := True;
       Exit;
-    end else if not Equipment.ContainsItem('Xeric''s talisman') then begin
+
+    end else if ((not Equipment.ContainsItem('Xeric''s talisman')) and (not Inventory.ContainsItem('Xeric''s talisman'))) then begin
       WriteLn('No xeric''s talisman equipped. Skipping patch.');
       Self.CurrentPatch.Skip := True;
       Exit;

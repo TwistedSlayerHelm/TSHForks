@@ -259,7 +259,7 @@ begin
       {leprechaun coords} [9780, 2359],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Port Phasmatys herb',
-      {map coords}        [9400, 2200, 10150, 2500]];
+      {map coords}        [9385, 2036, 10384, 2680]];
 
   PatchData += [    {Guild/herb}
       {patch type}        EPatchType.HERB,

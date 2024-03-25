@@ -1181,6 +1181,11 @@ begin
       Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
   end;
 
+  if Mainscreen.IsUpText('Clear') then begin
+      Self.CurrentPatch.Complete := True;
+      Exit;
+  end;
+
   if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
   end else if not ChooseOption.Select('Pick') then begin

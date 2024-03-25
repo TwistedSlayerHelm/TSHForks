@@ -424,13 +424,13 @@ begin
     case attempts of
       0:    begin
               if not Self.RSW^.MakePointVisible(Self.Data.Coords) then begin
-                Self.RSW^.WalkBlind([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
+                Self.RSW^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
                 Self.RSW^.MakePointVisible(Self.Data.Coords);
               end
             end;
       1:    Antiban.RandomRotate;
       2:    begin
-              Self.RSW^.WalkBlind([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
+              Self.RSW^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
               Self.RSW^.MakePointVisible(Self.Data.Coords);
             end;
       3:    begin
@@ -507,13 +507,13 @@ begin
     case attempts of
       0:    begin
               if not Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords) then begin
-                Self.RSW^.WalkBlind([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
+                Self.RSW^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
                 Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords);
               end
             end;
       1:    Antiban.RandomRotate;
       2:    begin
-              Self.RSW^.WalkBlind([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
+              Self.RSW^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
               Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords);
             end;
       3:    begin

@@ -1186,10 +1186,17 @@ begin
       Exit;
   end;
 
-  if Mainscreen.IsUpText('Pick') then begin
+    if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
-  end else if not ChooseOption.Select('Pick') then begin
-    WriteLn('Failed to find harvest uptext or choose option.');
+  end else if MainScreen.IsUpText('Clear') then begin
+    Self.CurrentPatch.Complete := True;
+    Exit;
+  end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
+    if ChooseOption.HasOption('Clear') then begin
+      Self.CurrentPatch.Complete := True
+    end else begin
+      WriteLn('Failed to find harvest uptext or choose option.');
+    end;
     Exit;
   end;
 

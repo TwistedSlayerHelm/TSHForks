@@ -1408,9 +1408,14 @@ begin
       end;
     ETravelMethod.HOUSE_TELEPORT:
       begin
-        item := 'Teleport to House';
+        item := 'Teleport to house';
         wait(250,500);
-        Inventory.ClickItem(item, 'Outside');
+        if Inventory.ContainsItem('Teleport to house') then
+        begin
+          Inventory.ClickItem(item, 'Outside');
+        end
+        else
+          Magic.CastSpell(ERSSpell.TELEPORT_TO_HOUSE, 'Outside');
       end;
     ETravelMethod.FARMING_CAPE:
       begin

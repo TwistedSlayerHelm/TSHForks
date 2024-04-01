@@ -30,6 +30,7 @@ type
    ARDY_CLOAK_4_BUSH,     {Monastery}
    XERICS_TALISMAN,       {Hosidious}
    HOSIDIOUS_TABLET,      {Hosidious}
+   HOUSE_TELEPORT,        {Hosidious}
    EXPLORERS_RING_2,      {Fally}
    EXPLORERS_RING_3,      {Fally}
    EXPLORERS_RING_4,      {Fally}
@@ -1404,6 +1405,12 @@ begin
         item := 'Hosidius teleport';
         wait(250,500);
         Inventory.ClickItem(item, 'Break');
+      end;
+    ETravelMethod.HOUSE_TELEPORT:
+      begin
+        item := 'Teleport to House';
+        wait(250,500);
+        Inventory.ClickItem(item, 'Outside');
       end;
     ETravelMethod.FARMING_CAPE:
       begin

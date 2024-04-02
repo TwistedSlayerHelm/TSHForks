@@ -1219,7 +1219,7 @@ begin
     Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
 
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
-    if Mainscreen.IsUpText('Clear') then begin
+    if Mainscreen.IsUpText('ear') then begin
       Self.CurrentPatch.Complete := True;
       Exit;
     end else if Inventory.IsFull then begin

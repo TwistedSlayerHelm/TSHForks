@@ -1365,7 +1365,7 @@ begin
       begin
         spell := ERSSpell.CAMELOT_TELEPORT;
         wait(250,500);
-        Magic.CastSpell(spell);
+        Magic.CastSpell(spell, 'Cast');  
       end;
     ETravelMethod.CAMELOT_TABLET:
       begin

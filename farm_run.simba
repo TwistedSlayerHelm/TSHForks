@@ -46,7 +46,7 @@ type
     SUPER,
     ULTRA,
     BOTTOMLESS,
-    FERTILIZE_SOIL
+    FERTILE_SOIL
   );
 
   EPatchType = (
@@ -911,7 +911,7 @@ begin
 
   WriteLn('Composting at ' + Self.CurrentPatch.Data.Name + ' patch.');
 
-  if (Self.CompostMethod <> ECompostMethod.FERTILIZE_SOIL) and (Inventory.GetSelectedSlot = -1) then begin
+  if (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) and (Inventory.GetSelectedSlot = -1) then begin
     if (not Inventory.FindItem(compostItem, slot)) and (Self.CompostMethod <> ECompostMethod.BOTTOMLESS) then begin
       WithdrawCompost;
       Inventory.FindItem(compostItem, slot);
@@ -925,8 +925,20 @@ begin
       TerminateScript('Out of compost! Terminating.');
   end;
 
-  if Self.CompostMethod = ECompostMethod.FERTILIZE_SOIL then begin
-    //TODO
+  if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then begin
+    if Magic.GetSpellBook <> ERSSpellBook.LUNAR then begin
+      if SRL.Dice(80) then
+        Antiban.LoseFocus
+      else if SRL.Dice(50) then
+        Antiban.RandomMouse
+      else
+        Magic.Open;
+      Wait(130*ONE_SECOND); //wait for spellbook swap to timeout incase something broke.
+      if Magic.GetSpellBook <> ERSSpellBook.LUNAR then
+        TerminateScript('Not on the correct spellbook for fertilize soil!');
+    end;
+
+    Magic.ClickSpell(ERSSpell.FERTILE_SOIL);
   end else if (Inventory.GetSelectedSlot = -1) and (not Inventory.SetSelectedSlot(slot)) then begin
     WriteLn('Failed to select compost in inventory.');
     Exit;
@@ -966,7 +978,7 @@ begin
     Exit;
   end;
 
-  if not WaitUntil(Chat.FindMessage('u trea'), 50, 10000) then begin
+  if not WaitUntil((Chat.FindMessage('trea') or Chat.FindMessage('ming 2')), 50, 10000) then begin
     WriteLn('WaitUntil failed in composting step.');
     Exit;
   end;
@@ -1072,7 +1084,7 @@ begin
 
   if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
     if SRL.Dice(65) then begin
-      if Self.CompostMethod = ECompostMethod.FERTILIZE_SOIL then
+      if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then
         //TODO
       else if Inventory.FindItem(compostItem, slot) then
         Inventory.SetSelectedSlot(slot);
@@ -1365,7 +1377,7 @@ begin
       begin
         spell := ERSSpell.CAMELOT_TELEPORT;
         wait(250,500);
-        Magic.CastSpell(spell, 'Cast');  
+        Magic.CastSpell(spell, 'Cast');
       end;
     ETravelMethod.CAMELOT_TABLET:
       begin

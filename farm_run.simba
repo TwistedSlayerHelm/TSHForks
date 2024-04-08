@@ -1593,6 +1593,8 @@ begin
   for i := 0 to High(Self.Patches) do
     tmp += Self.Patches[i].Data.MapCoords;
 
+  ItemFinder.Similarity := 0.997; 
+
   Self.RSW.SetupRegions(tmp);
   Self.RSW.AdaptiveWalk := True;
 

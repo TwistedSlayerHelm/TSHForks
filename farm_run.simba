@@ -282,6 +282,8 @@ begin
       {name}              'Monestary bush',
       {map coords}        [5650, 3350, 6050, 3750]];
 
+  PatchData += [    {Add Redwoods}
+      {map coords}    [1334, 2082, 2222, 2784]];
 end;
 
 function ProgReport(
@@ -892,6 +894,27 @@ begin
   end;
 
   MainScreen.CloseInterface(True);
+end;
+
+procedure TFarmRun.DropBuckets();
+var
+  Tmp, Slots : TIntegerArray;
+  I : Int32;
+begin
+  if not Inventory.FindItems(['Bucket'], Tmp) then
+    Exit;
+
+  for I := 0 to High(Tmp) do begin
+    if SRL.CountColor(CTS2(4087132, 1, 3.61, 4.36), Inventory.GetSlotBox(Tmp[I])) > 2 then
+      Continue
+    else
+      Slots += Tmp[I];
+  end;
+
+  if Slots.Len < 1 then
+    Exit;
+
+  Inventory.ShiftDrop(Slots);
 end;
 
 procedure TFarmRun.CompostPatch();
@@ -1555,27 +1578,6 @@ begin
 
   if (SRL.Dice(75) and (Inventory.CountEmptySlots <= 6)) or Inventory.IsFull then
     Self.NoteItems;
-end;
-
-procedure TFarmRun.DropBuckets();
-var
-  Tmp, Slots : TIntegerArray;
-  I : Int32;
-begin
-  if not Inventory.FindItems(['Bucket'], Tmp) then
-    Exit;
-
-  for I := 0 to High(Tmp) do begin
-    if SRL.CountColor(CTS2(4087132, 1, 3.61, 4.36), Inventory.GetSlotBox(Tmp[I])) > 2 then
-      Continue
-    else
-      Slots += Tmp[I];
-  end;
-
-  if Slots.Len < 1 then
-    Exit;
-
-  Inventory.ShiftDrop(Slots);
 end;
 
 procedure TFarmRun.Report();

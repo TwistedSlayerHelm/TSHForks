@@ -903,7 +903,7 @@ begin
     Exit;
 
   for I := 0 to High(Tmp) do begin
-    if SRL.CountColor(CTS2(4087132, 1, 3.61, 4.36), Inventory.GetSlotBox(Tmp[I]) > 2 then
+    if SRL.CountColor(CTS2(4087132, 1, 3.61, 4.36), Inventory.GetSlotBox(Tmp[I])) > 2 then
       Continue
     else
       Slots += Tmp[I];
@@ -920,7 +920,6 @@ var
   compostArray    : TStringArray := ['Compost', 'Supercompost', 'Ultracompost', 'Bottomless compost bucket', ''];
   compostItem     : TRSItem := compostArray[Self.CompostMethod];
   slot, attempts  : Int32;
-  bucketSlots     : TIntegerArray;
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1613,7 +1612,7 @@ begin
   for i := 0 to High(Self.Patches) do
     tmp += Self.Patches[i].Data.MapCoords;
 
-  ItemFinder.Similarity := 0.997; 
+  ItemFinder.Similarity := 0.997;
 
   Self.RSW.SetupRegions(tmp);
   Self.RSW.AdaptiveWalk := True;

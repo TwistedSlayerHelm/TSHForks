@@ -1390,7 +1390,7 @@ begin
       begin
         spell := ERSSpell.CATHERBY_TELEPORT;
         wait(250,500);
-        Magic.CastSpell(spell);
+        Magic.CastSpell(spell, 'Cast');
       end;
     ETravelMethod.CAMELOT_TELEPORT:
       begin

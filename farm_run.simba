@@ -1344,7 +1344,17 @@ begin
   KeyBoard.KeyUp(VK_B);
 end;
 
-procedure TFarmRun.TeleportTo();
+procedure TFarmRun.TeleportFirstPatch();
+var
+  Pos : TPoint;
+begin
+  Pos := Self.RSW.GetMyPos;
+  repeat
+    Self.TeleportTo(Self.Patches[0].TravelMethod, False);
+  until Self.InactivityTimer.IsFinished or WaitUntil((Self.RSW.GetMyPos <> Pos), 17, 10000);
+end;
+
+procedure TFarmRun.TeleportTo(TravelMethod : ETravelMethod; ConfirmPos : Boolean);
 label
   teleport_complete;
 var
@@ -1359,7 +1369,7 @@ begin
 
   if Minimap.InPOH then begin
 
-    case Self.CurrentPatch.TravelMethod of
+    case TravelMethod of
       ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD,
       ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD:
         begin
@@ -1373,7 +1383,7 @@ begin
     Exit;
   end;
 
-  case Self.CurrentPatch.TravelMethod of
+  case TravelMethod of
     ETravelMethod.ICY_BASALT:
       begin
         item := 'Icy basalt';
@@ -1552,7 +1562,7 @@ begin
       Self.CurrentPatch.Skip := True;
       Exit;
     end;
-  end else if Self.CurrentPatch.TravelMethod = ETravelMethod.XERICS_TALISMAN then begin
+  end else if TravelMethod = ETravelMethod.XERICS_TALISMAN then begin
     if Equipment.ContainsItem('Xeric''s talisman (inert)') then begin
       WriteLn('Out of xeric''s talisman charges. Skipping patch.');
       Self.CurrentPatch.Skip := True;
@@ -1572,11 +1582,14 @@ begin
     end;
   end;
 
-  if (Self.CurrentPatch.TravelMethod = ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD)
-    or (Self.CurrentPatch.TravelMethod = ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD) then
+  if (TravelMethod = ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD)
+    or (TravelMethod = ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD) then
       Self.UsePOHSpiritTree('guild');
 
   teleport_complete:
+  if not ConfirmPos then
+    Exit;
+
   if not WaitUntil((Self.RSW.GetMyPos in Self.CurrentPatch.Data.MapCoords), 10, 10000) then
     Exit;
 
@@ -1677,7 +1690,7 @@ begin
         EPatchState.COMPOST     : Self.CompostPatch;
         EPatchState.DISEASED    : Self.HandleDiseasedPatch;
         EPatchState.DEAD        : Self.HandleDeadPatch;
-        EPatchState.TELEPORT_TO : Self.TeleportTo;
+        EPatchState.TELEPORT_TO : Self.TeleportTo(Self.CurrentPatch.TravelMethod, True);
         EPatchState.NOTE_ITEMS  : Self.NoteItems;
         EPatchState.FAILED      : Inc(failedCount);
         EPatchState.COMPLETE    :

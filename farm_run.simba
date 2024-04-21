@@ -113,7 +113,6 @@ type
     Runtime                         : TStopWatch;
     HarvestQuantities               : TIntegerArray;
     XPGained, LastXPRead            : Int32;
-    OnStart, OnComplete             : procedure();
     DoReport, DoBreak               : Boolean;
     Transport                       : TUniversalTransport;
     ReadyTimer                      : TCountDown;
@@ -612,6 +611,14 @@ begin
   if msg.Contains('diseas') then
     Exit(EPatchState.DISEASED);
   Exit(EPatchState.FAILED);
+end;
+
+procedure TFarmRun.OnStart(); begin
+
+end;
+
+procedure TFarmRun.OnComplete(); begin
+
 end;
 
 function TRSChat.ChatUntilOptions(): Boolean;
@@ -1642,8 +1649,7 @@ begin
   Mainscreen.SetHighestPitch;
   Options.SetZoomLevel(Random(17, 23));
 
-  if @Self.OnStart <> nil then
-    Self.OnStart;
+  Self.OnStart;
 
   Self.LastXPRead := XPBar.Read;
   Self.InactivityTimer.Restart;
@@ -1706,8 +1712,7 @@ begin
   Antiban.MinZoom := AntibanMinZ;
   Antiban.MaxZoom := AntibanMaxZ;
 
-  if (@Self.OnComplete <> nil) then
-    Self.OnComplete;
+  Self.OnComplete;
 
   Self.Runtime.Pause;
 

@@ -37,6 +37,7 @@ type
    FENKENSTRAIN_TELEPORT, {Phasmatys}
    ECTOPHIAL,             {Phasmatys}
    FARMING_CAPE,          {Guild}
+   SKILLS_NECKLACE,       {Guild}
    HOUSE_TAB_SPIRIT_TREE_GUILD,
    HOUSE_TELE_SPIRIT_TREE_GUILD
   );
@@ -1359,6 +1360,7 @@ label
   teleport_complete;
 var
   item            : TRSItem         := '';
+  items           : TRSItemArray;
   spell           : ERSSpell        := ERSSpell.BAKE_PIE;
   b: TBox;
 begin
@@ -1533,6 +1535,22 @@ begin
         wait(250,500);
         if not Inventory.ClickItem(item, 'Monastery Teleport') then
           Equipment.ClickItem(item, 'Kandarin Monastery');
+      end;
+    ETravelMethod.SKILLS_NECKLACE:
+      begin
+        items := (['Skills necklace(6)', 'Skills necklace(5)', 'Skills necklace(4)', 'Skills necklace(3)',
+                   'Skills necklace(2)', 'Skills necklace(1)']);
+        for item in items do
+        wait(250,500);
+        if Inventory.ContainsItem(item) then
+        begin
+          Inventory.ClickItem(item, 'Rub');
+          WaitUntil(Mainscreen.HasInterface(), 10, 5000);
+          b := ([219,155,295,165]);
+          Mouse.Click(b, MOUSE_LEFT);
+        end
+        else
+          Equipment.ClickItem(item, 'Farming guild');
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin

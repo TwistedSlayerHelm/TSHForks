@@ -614,6 +614,104 @@ begin
   Exit(EPatchState.FAILED);
 end;
 
+function TUniversalTransport.handleMagicTeleport(constref teleportLocation: TTeleportLocation; useMagic: Boolean = False): Boolean; override;
+var
+  startPosition: TPoint := ScriptWalker^.GetMyPos();
+  teleportTabName: String := teleportLocation.destination.Lower() + " teleport";
+  teleportTabOption: String := 'Break';
+  spellBook : ERSSpellBook;
+  spell     : ERSSpell;
+begin
+  Self.DebugLn('Looking for ' + teleportTabName);
+  if not useMagic then
+  begin
+    case teleportLocation.destination of
+      'Watchtower Yanille':
+      begin
+        teleportTabName := 'watchtower teleport';
+        teleportTabOption := 'Yanille';
+      end;
+      //'Grand Exchange':
+      //begin
+      //  teleportTabName := 'varrock teleport';
+      //  teleportTabOption := 'Grand Exchange';
+      //end;
+      'Camelot Bank':
+       begin
+        teleportTabName := 'camelot teleport';
+        teleportTabOption := 'Seers'' Village';
+      end;
+      'House':
+       begin
+        teleportTabName := 'teleport to house';
+      end;
+    end;
+
+    if Inventory.ContainsItem(teleportTabName)
+    and WaitUntil(Inventory.ClickItem(teleportTabName, teleportTabOption), 200, 5000) then
+      Exit(True);
+
+    self.DebugLn('wasn''t able to teleport with tablet');
+    Exit(False);
+  end;
+
+  if Stats.GetLevel(ERSSkill.MAGIC) < teleportLocation.magicLevel then
+  begin
+    Self.DebugLn('Magic level not high enough');
+    Exit();
+  end;
+
+  case teleportLocation.teleportType of
+    ETeleportType.ANCIENT_MAGICKS: spellBook := ERSSpellBook.ANCIENT;
+    ETeleportType.ARCEUUS_MAGIC: spellBook := ERSSpellBook.ARCEUUS;
+    ETeleportType.LUNAR_MAGIC: spellBook := ERSSpellBook.LUNAR;
+    ETeleportType.NORMAL_MAGIC: spellBook := ERSSpellBook.STANDARD;
+  end;
+
+  if Magic.GetSpellBook <> spellBook then begin
+    Self.DebugLn('Not on the correct spellbook we need ' + ToStr(spellbook));
+
+    if (Stats.GetLevel(ERSSkill.MAGIC) >= 96) and (Magic.GetSpellBook = ERSSpellBook.LUNAR) then
+    begin
+      Self.DebugLn('Attempting to cast spellbook swap');
+      Magic.ClickSpell(ERSSpell.SPELLBOOK_SWAP);
+      if not WaitUntil(('spell' in Chat.GetChatTitle), 100, 3000) then begin
+        Self.DebugLn('Timed out casting spellbook swap');
+        Exit(False);
+      end;
+
+      Chat.ClickOption(ToStr(spellbook).PascalCase);
+
+      if not WaitUntil((Magic.GetSpellBook = spellbook), 100, 3000) then begin
+        Self.DebugLn('Timed out casting spellbook swap');
+        Exit(False);
+      end;
+    end
+      else
+    begin
+      raise 'We are not on the correct spellbook!';
+    end;
+  end;
+
+  case teleportLocation.destination of
+    'Watchtower Yanille': Exit(Magic.CastSpell(ERSSpell.WATCHTOWER_TELEPORT, 'Yanille'));
+    'Camelot Bank': Exit(Magic.CastSpell(ERSSpell.CAMELOT_TELEPORT, 'Seers'''));
+    //'Grand Exchange': Exit(Magic.CastSpell(ERSSpell.VARROCK_TELEPORT, 'Grand Exchange'));
+    else
+      for spell in ERSSPELL do
+        if teleportLocation.destination.Upper.Replace(' ', '').Replace('''', '') in ToStr(spell).Replace('_', '').Replace('''', '') then
+          Break;
+  end;
+
+  if not Magic.CastSpell(spell) then
+  begin
+    WriteLn('couldnt cast spell: ', spell);
+    Exit(False)
+  end;
+
+  Result := WaitUntil(not ScriptWalker^.AtTile(startPosition, 10), 200, 10000);
+end;
+
 procedure TFarmRun.OnStart(); begin
 
 end;

@@ -1352,7 +1352,8 @@ begin
   Pos := Self.RSW.GetMyPos;
   repeat
     Self.TeleportTo(Self.Patches[0].TravelMethod, False);
-  until Self.InactivityTimer.IsFinished or WaitUntil((Self.RSW.GetMyPos <> Pos), 17, 10000);
+    Wait(2250, 2750);
+  until (Self.RSW.GetMyPos <> Pos)
 end;
 
 procedure TFarmRun.TeleportTo(TravelMethod : ETravelMethod; ConfirmPos : Boolean);
@@ -1468,7 +1469,8 @@ begin
       end;
     ETravelMethod.FARMING_CAPE:
       begin
-        item := 'Farming cape';
+        items := (['Farming cape', 'Farming cape(t)']);
+        for item in items do
         wait(250,500);
         if not Equipment.ClickItem(item, 'Teleport') then
           Inventory.ClickItem(item, 'Teleport');

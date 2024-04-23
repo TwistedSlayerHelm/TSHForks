@@ -1752,7 +1752,6 @@ begin
   ItemFinder.Similarity := 0.997;
 
   Self.RSW.SetupRegions(tmp);
-  Self.RSW.AddRegion([1334, 2082, 2222, 2784]);
   Self.RSW.AdaptiveWalk := True;
 
   Self.InactivityTimer.Init(6*ONE_MINUTE);

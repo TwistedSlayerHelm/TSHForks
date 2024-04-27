@@ -1316,7 +1316,7 @@ begin
     end;
 
     HarvestWait;
-    if Self.CurrentPatch.Skip := True then
+    if Self.CurrentPatch.Skip = True then
       Break;
   end;
 

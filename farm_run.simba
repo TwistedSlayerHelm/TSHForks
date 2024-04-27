@@ -6,6 +6,7 @@ type
     STRONGHOLD_HERB,
     CATHERBY_HERB,
     CATHERBY_ALLOT_N,
+    CATHERBY_ALLOT_S,
     ARDY_HERB,
     HOSIDIOUS_HERB,
     HOSIDIOUS_FLOWER,
@@ -202,14 +203,24 @@ begin
       {name}              'Catherby herb',
       {map coords}        [6286, 2351, 6910, 2850]];
 
-  PatchData += [    {Catherby/snape}
+  PatchData += [    {Catherby/north allotment}
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(3431524, 12, 0.05, 0.16),
       {patch coords}      [6644, 2578],
       {leprechaun coords} [6653, 2583],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
-      {name}              'Catherby allotment',
+      {name}              'Catherby north allotment',
+      {map coords}        [6286, 2351, 6910, 2850]];
+
+  PatchData += [    {Catherby/south allotment}
+      {patch type}        EPatchType.ALLOTMENT,
+      {border color}      CTS2(5927804, 9, 0.05, 0.11),
+      {soil color}        CTS2(3431524, 12, 0.05, 0.16),
+      {patch coords}      [6646, 2609],
+      {leprechaun coords} [6653, 2583],
+      {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
+      {name}              'Catherby south allotment',
       {map coords}        [6286, 2351, 6910, 2850]];
 
   PatchData += [    {Ardy/herb}

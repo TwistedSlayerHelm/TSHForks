@@ -1,18 +1,22 @@
-{$include_once WaspLib/optional/handlers/teleports/transport.simba}   
+{$include_once WaspLib/optional/handlers/teleports/transport.simba}
 
 type
   EFarmPatch = (
     WEISS_HERB,
     STRONGHOLD_HERB,
     CATHERBY_HERB,
+    CATHERBY_FLOWER,
     CATHERBY_ALLOT_N,
     CATHERBY_ALLOT_S,
     ARDY_HERB,
+    ARDY_FLOWER,
     HOSIDIOUS_HERB,
     HOSIDIOUS_FLOWER,
     FALLY_HERB,
+    FALLY_FLOWER,
     PHASMATYS_HERB,
     GUILD_HERB,
+    GUILD_FLOWER,
     MONESTARY_BUSH
   );
 
@@ -203,6 +207,16 @@ begin
       {name}              'Catherby herb',
       {map coords}        [6286, 2351, 6910, 2850]];
 
+  PatchData += [    {Catherby/limp}
+      {patch type}        EPatchType.FLOWER,
+      {border color}      CTS2(5927804, 9, 0.05, 0.11),
+      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {patch coords}      [6626, 2594],
+      {leprechaun coords} [6653, 2583],
+      {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
+      {name}              'Catherby flower',
+      {map coords}        [6286, 2351, 6910, 2850]];
+
   PatchData += [    {Catherby/north allotment}
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
@@ -231,6 +245,16 @@ begin
       {leprechaun coords} [6080, 2923],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Ardy herb',
+      {map coords}        [5900, 2800, 6250, 3100]];
+
+  PatchData += [    {Ardy/limp}
+      {patch type}        EPatchType.FLOWER,
+      {border color}      CTS2(5927804, 9, 0.05, 0.11),
+      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {patch coords}      [6058, 2949],
+      {leprechaun coords} [6080, 2923],
+      {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
+      {name}              'Ardy flower',
       {map coords}        [5900, 2800, 6250, 3100]];
 
   PatchData += [    {Hosidious/herb}
@@ -263,6 +287,16 @@ begin
       {name}              'Fally herb',
       {map coords}        [7500, 3100, 7700, 3450]];
 
+  PatchData += [    {Fally/limp}
+      {patch type}        EPatchType.FLOWER,
+      {border color}      CTS2(5927804, 9, 0.05, 0.11),
+      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {patch coords}      [7610, 3218],
+      {leprechaun coords} [7604, 3228],
+      {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
+      {name}              'Fally flower',
+      {map coords}        [7500, 3100, 7700, 3450]];
+
   PatchData += [    {Phasmatys/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(2646105, 4, 0.14, 0.45),
@@ -278,6 +312,16 @@ begin
       {border color}      CTS2(6319989, 9, 0.10, 0.09),
       {soil color}        CTS2(3762031, 9, 0.08, 0.16),
       {patch coords}      [346, 1554],
+      {leprechaun coords} [336, 1532],
+      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {name}              'Farming Guild herb',
+      {map coords}        [ 200, 1300,  600, 1700]];
+
+  PatchData += [    {Guild/limp}
+      {patch type}        EPatchType.FLOWER,
+      {border color}      CTS2(6319989, 9, 0.10, 0.09),
+      {soil color}        CTS2(3762031, 9, 0.08, 0.16),
+      {patch coords}      [434, 1558],
       {leprechaun coords} [336, 1532],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',

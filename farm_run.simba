@@ -850,7 +850,7 @@ end;
 
 procedure TFarmRun.NoteItems();
 var
-  count, slot, i  : Int32;
+  count, slot, I  : Int32;
   item            : TRSItem;
   items           : TRSItemArray;
   slots, lepItems : TIntegerArray;
@@ -863,7 +863,7 @@ begin
   Self.CleanGrimyHerbs;
 
   WriteLn('Noting items at ', '');
-  for i:=0 to High(LEPRECHAUN_ITEMS) do begin
+  for I := 0 to High(LEPRECHAUN_ITEMS) do begin
     if Inventory.FindItem(item := LEPRECHAUN_ITEMS[i], slot) then begin
       slots += slot;
       items += item;
@@ -885,7 +885,9 @@ begin
       Exit;
 
     count := Inventory.CountItem(items[i]);
-    Inventory.SetSelectedSlot(slots[i]);
+
+    if not Inventory.SetSelectedSlot(slots[i]) then
+      Continue;
 
     if SRL.Dice(65) then
       Mouse.HumanMove(lepPT)
@@ -913,11 +915,16 @@ begin
       Mouse.RandomMovement;
     end;
 
-    if WaitUntil((Inventory.CountItem(items[i]) = 0), 15, 10000) then
-      Self.HarvestQuantities[lepItems[i]] += count;
+    if Self.RSW.GetMyPos.DistanceTo(Self.CurrentPatch.Data.LeprechaunCoords) > 10 then begin
+      WaitUntil(Minimap.IsPlayerMoving, 17, Random(717, 808));
+      while Minimap.IsPlayerMoving do
+        Wait(17, 42);
+    end;
 
-    Minimap.WaitPlayerMoving;
+    if WaitUntil((Inventory.CountItem(items[i]) < count), 17, 3000) then
+      Self.HarvestQuantities[lepItems[i]] += count;
   end;
+
   Inventory.SetSelectedSlot(-1);
 end;
 
@@ -1282,7 +1289,7 @@ procedure TFarmRun.HarvestWait();
 var
   T : TCountdown;
 begin
-  T.Init(300);
+  T.Init(350);
 
   repeat
     if Length(MainScreen.FindHitsplats(MainScreen.GetPlayerBox)) > 1 then begin
@@ -1379,22 +1386,30 @@ begin
   if not Self.CurrentPatch.Find then
     Exit;
 
-  if not Mainscreen.IsUpText('Pick') then begin
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+  if not (Mouse.Position in Self.CurrentPatch.SearchBox) then begin
+    if SRL.Dice(65) then
+      Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+    else
+      Mouse.Move(Self.CurrentPatch.SearchBox);
   end;
 
   if Mainscreen.IsUpText('Clear') then begin
-      Self.CurrentPatch.Complete := True;
-      Exit;
+    Self.CurrentPatch.Complete := True;
+    Exit;
+  end else if MainScreen.IsUpText('Inspect') then begin
+    Self.CurrentPatch.Skip := True;
+    WriteLn('Skipping current patch because it''s not fully grown.');
+    Exit;
   end;
 
-    if Mainscreen.IsUpText('Pick') then begin
+  if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
   end else if MainScreen.IsUpText('Clear') then begin
     Self.CurrentPatch.Complete := True;
+    Exit;
+  end else if MainScreen.IsUpText('Inspect') then begin
+    Self.CurrentPatch.Skip := True;
+    WriteLn('Skipping current patch because it''s not fully grown.');
     Exit;
   end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
     if ChooseOption.HasOption('Clear') then begin
@@ -1417,10 +1432,12 @@ begin
   if not Self.CurrentPatch.Find(False) then
     Exit;
 
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+  if not (Mouse.Position in Self.CurrentPatch.SearchBox) then begin
+    if SRL.Dice(65) then
+      Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+    else
+      Mouse.Move(Self.CurrentPatch.SearchBox);
+  end;
 
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
     if Mainscreen.IsUpText('ear') then begin
@@ -1433,6 +1450,7 @@ begin
     end;
     Wait(300);
   end;
+
 end;
 
 procedure TFarmRun.UsePOHSpiritTree(Location: String);

@@ -326,7 +326,7 @@ begin
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
       {soil color}        CTS2(2972511, 10, 0.53, 0.59),
       {patch coords}      [434, 1558],
-      {leprechaun coords} [336, 1532],
+      {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
       {map coords}        [ 200, 1300,  600, 1700]];

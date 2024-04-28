@@ -438,8 +438,8 @@ end;
 
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);
 var
-  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment'];
-  harvestUpText : TStringArray := ['Pick', 'Pick', 'Pick', 'Harvest'];
+  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus'];
+  harvestUpText : TStringArray := ['Pick', 'Pick', 'Pick', 'Harvest', 'Pick'];
   data : TPatchData := PatchData[patch];
   tpa  : TPointArray := [];
   searchBox : TBox := [0, 0, 0, 0];
@@ -628,10 +628,10 @@ begin
   if not Self.Find then
     Exit(EPatchState.FAILED);
 
-  if Self.Data.PatchType = EPatchType.BUSH then
-    Exit(EPatchState.HARVEST_WHITEBERRIES);
   if Self.Data.PatchType = EPatchType.CACTUS then
     Exit(EPatchState.HARVEST_CACTUS);
+  if Self.Data.PatchType = EPatchType.BUSH then
+    Exit(EPatchState.HARVEST_WHITEBERRIES);
   if Self.IsEmpty then
     Exit(EPatchState.PLANT);
   if Self.IsDiseased then

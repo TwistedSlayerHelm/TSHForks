@@ -19,7 +19,7 @@ type
     GUILD_FLOWER,
     GUILD_BUSH,
     GUILD_CACTUS,
-    MONESTARY_BUSH    
+    MONESTARY_BUSH
   );
 
   ETravelMethod = (
@@ -225,7 +225,7 @@ begin
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(3431524, 12, 0.05, 0.16),
-      {patch coords}      [6644, 2578],
+      {patch coords}      [6646, 2578],
       {leprechaun coords} [6653, 2583],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby north allotment',
@@ -235,7 +235,7 @@ begin
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(3431524, 12, 0.05, 0.16),
-      {patch coords}      [6646, 2609],
+      {patch coords}      [6646, 2611],
       {leprechaun coords} [6653, 2583],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby south allotment',
@@ -313,8 +313,8 @@ begin
 
   PatchData += [    {Guild/herb}
       {patch type}        EPatchType.HERB,
-      {border color}      CTS2(6319989, 9, 0.10, 0.09),
-      {soil color}        CTS2(3762031, 9, 0.08, 0.16),
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
       {patch coords}      [346, 1554],
       {leprechaun coords} [336, 1532],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -323,8 +323,8 @@ begin
 
   PatchData += [    {Guild/limp}
       {patch type}        EPatchType.FLOWER,
-      {border color}      CTS2(6319989, 9, 0.10, 0.09),
-      {soil color}        CTS2(3762031, 9, 0.08, 0.16),
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
       {patch coords}      [434, 1558],
       {leprechaun coords} [336, 1532],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -333,8 +333,8 @@ begin
 
   PatchData += [    {Guild/bush}
       {patch type}        EPatchType.BUSH,
-      {border color}      CTS2(6127499, 7, 0.08, 0.61),
-      {soil color}        CTS2(3497831, 7, 0.07, 0.20),
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
       {patch coords}      [434, 1527],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -343,8 +343,8 @@ begin
 
   PatchData += [    {Guild/cactus}
       {patch type}        EPatchType.CACTUS,
-      {border color}      CTS2(6127499, 7, 0.08, 0.61),
-      {soil color}        CTS2(3497831, 7, 0.07, 0.20),
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
       {patch coords}      [450, 1470],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -360,7 +360,7 @@ begin
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
       {map coords}        [5650, 3350, 6050, 3750]];
-end;     
+end;
 
 function ProgReport(
                            ResultType:int32; ScriptName, ScriptAuthor, ScriptVersion: String;
@@ -463,22 +463,24 @@ var
     borderATPA            : T2DPointArray;
     i                     : Int32;
     filterPt              : TPoint      := Self.RSW^.GetTileMS(Self.Data.Coords).Mean;
-    SearchPt              : TPoint;
-    SearchFiltered        : TPointArray;
   begin
     if not (filterPt in Mainscreen.Bounds) then Exit(False);
     if SRL.FindColors(borderTPA, Self.Data.BorderColor, MainScreen.Bounds) = 0 then
       Exit(False);
 
-    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(25));
+    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(20));
     for i := 0 to High(borderATPA) do begin
       Self.TPA := borderATPA[i].ConvexHull.Connect;
-      if SRL.PointInPoly(filterPt, Self.TPA) then begin
-        Self.TPA := Self.TPA.SortFrom(MainScreen.Center);
-        SearchFiltered := Self.TPA.FilterDist(0, MainScreen.NormalizeDistance(140), Self.TPA[0].X, Self.TPA[0].Y);
-        SearchFiltered := SearchFiltered.SortFrom(MainScreen.Center);
-        SearchPt := SearchFiltered.Mean;
-        Self.SearchBox := Box(SearchPt, MainScreen.NormalizeDistance(12), MainScreen.NormalizeDistance(12));
+      Self.TPA := Self.TPA.SortFrom(MainScreen.Center);
+      if SRl.PointInPoly(filterPt, Self.TPA) then begin
+        if Self.Data.PatchType = EPatchType.ALLOTMENT then begin
+          Self.TPA := Self.TPA.SortFrom(MainScreen.Center);
+          Self.TPA := Self.TPA.FilterDist(0, MainScreen.NormalizeDistance(90), Self.TPA[0].X, Self.TPA[0].Y);
+        end;
+        Self.SearchBox.X1 := (Self.TPA.Mean.X - MainScreen.NormalizeDistance(12));
+        Self.SearchBox.Y1 := (Self.TPA.Mean.Y - MainScreen.NormalizeDistance(12));
+        Self.SearchBox.X2 := (Self.TPA.Mean.X + MainScreen.NormalizeDistance(12));
+        Self.SearchBox.Y2 := (Self.TPA.Mean.Y + MainScreen.NormalizeDistance(12));
         Self.SearchBox.LimitTo(MainScreen.Bounds);
         RSClient.Image.Clear;
         //RSClient.Image.DrawRect(Self.TPA.MinAreaRect, CHAT_COLOR_LIGHT_PURPLE);
@@ -711,99 +713,6 @@ begin
     Wait(0, 2500, wdLeft);
 
   Result := 'Select' in Self.GetChatTitle;
-end;
-
-function TFarmRun.GetFarmRunesNeeded(): TRSItemArray;
-var
-  SpellBook : ERSSpellBook;
-  TmpRunes : TRSItemArray;
-  I : Int32;
-  CanSBS, NeedsSBS : Boolean;
-begin
-  WriteLn('Getting runes needed for farm run.');
-  WriteLn('Spellbook detected: ', SpellBook := Magic.GetSpellBook);
-
-  CanSBS := (SpellBook = ERSSpellBook.LUNAR) and (Stats.GetLevel(ERSSkill.MAGIC) >= 96);
-
-  if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then begin
-    if SpellBook <> ERSSpellBook.LUNAR then
-      TerminateScript('Cannot use Fertile Spoil with your current spellbook.');
-
-    if Stats.GetLevel(ERSSkill.MAGIC, True) < 83 then
-      TerminateScript('You don''t have the required magic level for fertile soil.');
-
-    TmpRunes += ['Nature rune', 'Astral rune', 'Earth rune'];
-  end;
-
-  {if Self.CurePlant then begin
-    if SpellBook <> ERSSpellBook.LUNAR then
-      TerminateScript('Cannot use Cure Plant with your current spellbook.');
-
-    TmpRunes += ['Astral rune', 'Earth rune'];
-  end;}
-
-  if Self.ResurrectCrop then begin
-    if not ((SpellBook = ERSSpellBook.ARCEUUS) or CanSBS) then
-      TerminateScript('Cannot use Resurrect Crop with your current spellbook. Arceuss or Lunars and 96 magic required.');
-    TmpRunes += ['Soul rune', 'Nature rune', 'Blood rune', 'Earth rune'];
-    NeedsSBS := SpellBook = ERSSpellBook.LUNAR;
-  end;
-
-  for I := 0 to High(Self.Patches) do begin
-    case Self.Patches[I].TravelMethod of
-
-      ETravelMethod.CATHERBY_TELEPORT:
-      begin
-        if SpellBook <> ERSSpellBook.LUNAR then
-          TerminateScript('Cannot use Catherby teleport with your current spellbook. Lunars required.');
-        TmpRunes += ['Law rune', 'Astral rune', 'Water rune'];
-      end;
-
-      ETravelMethod.CAMELOT_TELEPORT:
-      begin
-        if not ((SpellBook = ERSSpellBook.STANDARD) or CanSBS) then
-          TerminateScript('Cannot use Camelot teleport with your current spellbook. Standard or Lunars and 96 magic required.');
-       TmpRunes += ['Law rune', 'Air rune'];
-       NeedsSBS := SpellBook = ERSSpellBook.LUNAR;
-      end;
-
-      ETravelMethod.FENKENSTRAIN_TELEPORT:
-      begin
-        if not ((SpellBook = ERSSpellBook.ARCEUUS) or CanSBS) then
-          TerminateScript('Cannot use Fenkenstrain teleport with your current spellbook. Arceuss or Lunars and 96 magic required.');
-        TmpRunes += ['Law rune', 'Soul rune', 'Earth rune'];
-        NeedsSBS := SpellBook = ERSSpellBook.LUNAR;
-      end;
-
-      ETravelMethod.HOUSE_TELEPORT:
-      begin
-        if not ((SpellBook = ERSSpellBook.STANDARD) or CanSBS) then
-          TerminateScript('Cannot use House teleport with your current spellbook. Standard or Lunars and 96 magic required.');
-        TmpRunes += ['Law rune', 'Air rune', 'Earth rune'];
-        NeedsSBS := SpellBook = ERSSpellBook.LUNAR;
-      end;
-
-      {ETravelMethod.HARMONY_ISLAND_TELEPORT:
-      begin
-        if not ((SpellBook = ERSSpellBook.ARCEUUS) or CanSBS) then
-          TerminateScript('Cannot use Harmony Island teleport with your current spellbook. Arceuss or Lunars and 96 magic required.');
-        TmpRunes += ['Law rune', 'Soul rune', 'Nature rune'];
-        NeedsSBS := SpellBook = ERSSpellBook.LUNAR;
-      end;}
-
-    end;
-  end;
-
-  if NeedsSBS then
-    TmpRunes += ['Astral rune', 'Cosmic rune', 'Law rune'];
-
-  //remove duplicates
-  Sort(TmpRunes);
-  Result += TmpRunes[0];
-
-  for I := 1 to High(TmpRunes) do
-    if TmpRunes[I] <> Result[High(Result)] then
-      Result += TmpRunes[I];
 end;
 
 {procedure TFarmRun.GetContract();
@@ -1159,9 +1068,9 @@ begin
 
     if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
       if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
       else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+        Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
     end;
 
     if MainScreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
@@ -1237,9 +1146,9 @@ begin
 
     if not MainScreen.IsUpText(Self.CurrentPatch.EmptyUpText) then begin
       if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
       else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+        Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
     end;
 
     if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB)
@@ -1289,9 +1198,9 @@ begin
         Inventory.SetSelectedSlot(slot);
       Wait(78, 208);
       if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
       else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+        Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
     end;
   end;
 
@@ -1383,7 +1292,6 @@ begin
     if Self.CurrentPatch.Skip = True then
       Break;
   end;
-
 end;
 
 procedure TFarmRun.HarvestWhiteBerries();
@@ -1406,10 +1314,10 @@ begin
     Exit;
 
   if not Mainscreen.IsUpText('Pick') then begin
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+    if SRL.Dice(65) then
+      Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
+    else
+      Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
   end;
 
   if Mainscreen.IsUpText('Clear') then begin
@@ -1443,10 +1351,10 @@ begin
   if not Self.CurrentPatch.Find(False) then
     Exit;
 
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+  if SRL.Dice(65) then
+    Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
+  else
+    Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
 
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
     if Mainscreen.IsUpText('ear') then begin
@@ -1971,7 +1879,7 @@ begin
 
       case state of
         EPatchState.HARVEST_WHITEBERRIES: Self.HarvestWhiteBerries;
-        EPatchState.HARVEST_CACTUS: Self.HarvestCactus;
+        EPatchState.HARVEST_CACTUS: Self.HarvestCactus();
         EPatchState.HARVEST     : Self.Harvest;
         EPatchState.PLANT       : Self.Plant;
         EPatchState.COMPOST     : Self.CompostPatch;
@@ -2032,16 +1940,3 @@ procedure TFarmRun.DoFarmRun() begin
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
 
 end;
-
-{var
-  Farm : TFarmRun;
-begin
-
-  Farm.AddPatch(EFarmPAtch.CATHERBY_ALLOT_S, ETravelMethod.CATHERBY_TELEPORT, 'guam seed');
-  Farm.Init;
-  while true do begin
-    Farm.Patches[0].Find;
-    Wait(50);
-  end;
-
-end.}

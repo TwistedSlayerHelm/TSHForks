@@ -17,7 +17,9 @@ type
     PHASMATYS_HERB,
     GUILD_HERB,
     GUILD_FLOWER,
-    MONESTARY_BUSH
+    GUILD_BUSH,
+    GUILD_CACTUS,
+    MONESTARY_BUSH    
   );
 
   ETravelMethod = (
@@ -59,7 +61,8 @@ type
     HERB,
     FLOWER,
     BUSH,
-    ALLOTMENT
+    ALLOTMENT,
+    CACTUS
   );
 
   EPatchState = (
@@ -73,7 +76,8 @@ type
     FAILED,
     COMPLETE,
     SKIP,
-    HARVEST_WHITEBERRIES
+    HARVEST_WHITEBERRIES,
+    HARVEST_CACTUS
   );
 
   TFarmContract = record
@@ -327,6 +331,26 @@ begin
       {name}              'Farming Guild herb',
       {map coords}        [ 200, 1300,  600, 1700]];
 
+  PatchData += [    {Guild/bush}
+      {patch type}        EPatchType.BUSH,
+      {border color}      CTS2(6127499, 7, 0.08, 0.61),
+      {soil color}        CTS2(3497831, 7, 0.07, 0.20),
+      {patch coords}      [434, 1527],
+      {leprechaun coords} [440, 1536],
+      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {name}              'Farming Guild bush',
+      {map coords}        [ 200, 1300,  600, 1700]];
+
+  PatchData += [    {Guild/cactus}
+      {patch type}        EPatchType.CACTUS,
+      {border color}      CTS2(6127499, 7, 0.08, 0.61),
+      {soil color}        CTS2(3497831, 7, 0.07, 0.20),
+      {patch coords}      [450, 1470],
+      {leprechaun coords} [440, 1536],
+      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {name}              'Farming Guild cactus',
+      {map coords}        [ 200, 1300,  600, 1700]];
+
   PatchData += [    {Monestary/bush}
       {patch type}        EPatchType.BUSH,
       {border color}      CTS2(6127499, 7, 0.08, 0.61),
@@ -336,7 +360,7 @@ begin
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
       {map coords}        [5650, 3350, 6050, 3750]];
-end;
+end;     
 
 function ProgReport(
                            ResultType:int32; ScriptName, ScriptAuthor, ScriptVersion: String;
@@ -606,6 +630,8 @@ begin
 
   if Self.Data.PatchType = EPatchType.BUSH then
     Exit(EPatchState.HARVEST_WHITEBERRIES);
+  if Self.Data.PatchType = EPatchType.CACTUS then
+    Exit(EPatchState.HARVEST_CACTUS);
   if Self.IsEmpty then
     Exit(EPatchState.PLANT);
   if Self.IsDiseased then
@@ -1435,6 +1461,81 @@ begin
   end;
 end;
 
+procedure TFarmRun.HarvestCactus();
+var
+  i        : Int32;
+begin
+  if not RSClient.IsLoggedIn then
+    Exit;
+
+  WriteLn('Harvesting cactus at ' + Self.CurrentPatch.Data.Name + ' patch.');
+
+  if Inventory.IsFull then
+    Self.NoteItems;
+
+  if WaitUntil(Minimap.IsPlayerMoving, 17, 600) then
+    while Minimap.IsPlayerMoving do
+      Wait(13, 199);
+
+  if not Self.CurrentPatch.Find then
+    Exit;
+
+  if not Mainscreen.IsUpText('Pick') then begin
+    if SRL.Dice(65) then
+      Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
+    else
+      Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
+  end;
+
+  if Mainscreen.IsUpText('Clear') then begin
+      Self.CurrentPatch.Complete := True;
+      Exit;
+  end;
+
+    if Mainscreen.IsUpText('Pick') then begin
+    Mouse.Click(MOUSE_LEFT);
+  end else if MainScreen.IsUpText('Clear') then begin
+    Self.CurrentPatch.Complete := True;
+    Exit;
+  end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
+    if ChooseOption.HasOption('Clear') then begin
+      Self.CurrentPatch.Complete := True
+    end else begin
+      WriteLn('Failed to find harvest uptext or choose option.');
+    end;
+    Exit;
+  end;
+
+  if not Mainscreen.DidRedClick then begin
+    WriteLn('Failed to find red click.');
+    Exit;
+  end;
+
+  if WaitUntil(Minimap.IsPlayerMoving, 17, 600) then
+    while Minimap.IsPlayerMoving do
+      Wait(13, 199);
+
+  if not Self.CurrentPatch.Find(False) then
+    Exit;
+
+  if SRL.Dice(65) then
+    Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)))
+  else
+    Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
+
+  for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
+    if Mainscreen.IsUpText('ear') then begin
+      Self.CurrentPatch.Complete := True;
+      Exit;
+    end else if Inventory.IsFull then begin
+      Inventory.SetSelectedSlot(-1);
+      Self.NoteItems;
+      HarvestCactus;
+    end;
+    Wait(300);
+  end;
+end;
+
 procedure TFarmRun.UsePOHSpiritTree(Location: String);
 var
   Primary, Secondary,
@@ -1870,6 +1971,7 @@ begin
 
       case state of
         EPatchState.HARVEST_WHITEBERRIES: Self.HarvestWhiteBerries;
+        EPatchState.HARVEST_CACTUS: Self.HarvestCactus;
         EPatchState.HARVEST     : Self.Harvest;
         EPatchState.PLANT       : Self.Plant;
         EPatchState.COMPOST     : Self.CompostPatch;

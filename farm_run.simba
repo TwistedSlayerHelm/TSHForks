@@ -1295,13 +1295,14 @@ begin
     end;
   end;
 
-  if WaitUntil(((not Self.CurrentPatch.IsEmpty){ or Chat.FindMessage('ou plant')}), 15, 10000) then begin
+    XPBar.EarnedXP;
+  if WaitUntil(((not Self.CurrentPatch.IsEmpty) or XPBar.EarnedXP), 15, 10000) then begin
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
       Self.CompostPatch
     else
       Self.CurrentPatch.Complete := True;
-  end
+  end;
 end;
 
 procedure TFarmRun.HarvestWait();
@@ -1375,6 +1376,7 @@ begin
       Exit;
     end else if Inventory.IsFull then begin
       Inventory.SetSelectedSlot(-1);
+      Wait(532, 718);
       Self.NoteItems;
       Harvest;
     end;
@@ -1417,7 +1419,17 @@ begin
       Exit;
   end;
 
-    if Mainscreen.IsUpText('Pick') then begin
+  if Mainscreen.IsUpText('Inspect') then begin
+      Self.CurrentPatch.Complete := True;
+      Exit;
+  end;
+
+  if Mainscreen.IsUpText('Check-health') then begin
+      Mouse.Click(MOUSE_LEFT);
+      WaitUntil(XPBar.EarnedXP(), 15, 2600);
+  end;
+
+  if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
   end else if MainScreen.IsUpText('Clear') then begin
     Self.CurrentPatch.Complete := True;
@@ -1490,6 +1502,16 @@ begin
   if Mainscreen.IsUpText('Clear') then begin
       Self.CurrentPatch.Complete := True;
       Exit;
+  end;
+
+  if Mainscreen.IsUpText('Inspect') then begin
+      Self.CurrentPatch.Complete := True;
+      Exit;
+  end;
+
+  if Mainscreen.IsUpText('Check-health') then begin
+      Mouse.Click(MOUSE_LEFT);
+      WaitUntil(XPBar.EarnedXP(), 15, 2600);
   end;
 
     if Mainscreen.IsUpText('Pick') then begin

@@ -1347,6 +1347,7 @@ begin
     Mouse.Click(MOUSE_LEFT);
   end else if not ChooseOption.Select(Self.CurrentPatch.HarvestUpText) then begin
     WriteLn('Failed to find harvest uptext or choose option.');
+    Antiban.SmallCameraRotation();
     Exit;
   end;
 

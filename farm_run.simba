@@ -359,7 +359,7 @@ begin
       {leprechaun coords} [5846, 3544],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
-      {map coords}        [5650, 3350, 6050, 3750]];
+      {map coords}        [5575, 3342, 6151, 3786]];
 end;     
 
 function ProgReport(

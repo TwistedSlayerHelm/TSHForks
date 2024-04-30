@@ -32,6 +32,7 @@ type
    ARDY_CLOAK_2,          {Ardy}
    ARDY_CLOAK_3,          {Ardy}
    ARDY_CLOAK_4,          {Ardy}
+   ARDY_CLOAK_1_BUSH,     {Monastery}
    ARDY_CLOAK_2_BUSH,     {Monastery}
    ARDY_CLOAK_3_BUSH,     {Monastery}
    ARDY_CLOAK_4_BUSH,     {Monastery}
@@ -319,7 +320,7 @@ begin
       {leprechaun coords} [336, 1532],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/limp}
       {patch type}        EPatchType.FLOWER,
@@ -329,7 +330,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/bush}
       {patch type}        EPatchType.BUSH,
@@ -339,7 +340,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild bush',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/cactus}
       {patch type}        EPatchType.CACTUS,
@@ -349,7 +350,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild cactus',
-      {map coords}        [ 200, 1300,  600, 1700]];   
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Monestary/bush}
       {patch type}        EPatchType.BUSH,
@@ -359,7 +360,7 @@ begin
       {leprechaun coords} [5846, 3544],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
-      {map coords}        [5575, 3342, 6151, 3786]];
+      {map coords}        [5590, 3396, 6166, 3840]];
 end;     
 
 function ProgReport(
@@ -552,54 +553,56 @@ begin
   Result := colorCount = Self.SearchBox.Area;
 end;
 
-function TFarmPatch.FindLeprechaun(out point: TPoint; retry: Boolean = True): Boolean;
+function TFarmPatch.FindLeprechaun(out Point: TPoint; Retry: Boolean = True): Boolean;
 var
   attempts        : Int32;
 
   function F(): Boolean;
   var
-    sortPoint : TPoint := Self.RSW^.GetTileMS(Self.Data.LeprechaunCoords).Mean;
-    lepTPA    : TPointArray;
-    lepATPA   : T2DPointArray;
+    Cuboids : TCuboidExArray;
+    SearchTPA : TPointArray;
+    LeprechaunTPA   : TPointArray;
   begin
-    if not MainScreen.Bounds.Contains(sortPoint) then
-      Exit(False);
+    Cuboids := Self.RSW^.GetCuboidArrayMS([Self.Data.LeprechaunCoords], [1.5, 1.5, 8]);
 
-    if SRL.FindColors(lepTPA, Self.Data.LeprechaunColor, MainScreen.Bounds) = 0 then
-      Exit(False);
+    if Length(Cuboids) = 0 then
+      Exit;
 
-    lepATPA := lepTPA.Cluster(1).SortFrom(sortPoint);
-    point := lepATPA[0].Mean;
-    //RSClient.Image.Clear;
-    //RSClient.Image.DrawCircle(point, MainScreen.NormalizeDistance(12), CHAT_COLOR_RED);
+    if SRL.FindColors(SearchTPA, Self.Data.LeprechaunColor, Cuboids[0].Bounds) = 0 then
+      Exit;
+
+    LeprechaunTPA := Cuboids[0].Filter(SearchTPA);
+
+    if LeprechaunTPA.Len = 0 then
+      Exit;
+
+    Point := LeprechaunTPA.Mean;
     Result := True;
   end;
 
 begin
-  if not retry then
+  if not Retry then
     Exit(F());
-  Result := False;
+
   for attempts := 0 to 3 do begin
     if F() then
       Exit(True);
+
     case attempts of
-      0:    begin
+      0, 2: begin
               if not Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords) then begin
                 Self.RSW^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
                 Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords);
               end
             end;
       1:    Antiban.RandomRotate;
-      2:    begin
-              Self.RSW^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
-              Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords);
-            end;
       3:    begin
               WriteLn('Failed to find leprechaun.');
               Exit;
             end;
     end
   end;
+
 end;
 
 function TFarmPatch.GetState(): EPatchState;
@@ -628,10 +631,10 @@ begin
   if not Self.Find then
     Exit(EPatchState.FAILED);
 
-  if Self.Data.PatchType = EPatchType.CACTUS then
-    Exit(EPatchState.HARVEST_CACTUS);
   if Self.Data.PatchType = EPatchType.BUSH then
     Exit(EPatchState.HARVEST_WHITEBERRIES);
+  if Self.Data.PatchType = EPatchType.CACTUS then
+    Exit(EPatchState.HARVEST_CACTUS);
   if Self.IsEmpty then
     Exit(EPatchState.PLANT);
   if Self.IsDiseased then
@@ -1456,10 +1459,10 @@ begin
   if not Self.CurrentPatch.Find(False) then
     Exit;
 
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
+  if SRL.Dice(65) then
+    Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+    else
+      Mouse.Move(Self.CurrentPatch.SearchBox);
 
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
     if Mainscreen.IsUpText('ear') then begin
@@ -1785,6 +1788,13 @@ begin
         wait(250,500);
         if not Inventory.ClickItem(item, 'Teleport') then
           Equipment.ClickItem(item, 'Teleport');
+      end;
+    ETravelMethod.ARDY_CLOAK_1_BUSH:
+      begin
+        item := 'Ardougne cloak 1';
+        wait(250,500);
+        if not Inventory.ClickItem(item, 'Monastery Teleport') then
+          Equipment.ClickItem(item, 'Kandarin Monastery');
       end;
     ETravelMethod.ARDY_CLOAK_2:
       begin

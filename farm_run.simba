@@ -2043,6 +2043,11 @@ begin
   Self.Report;
 end;
 
+procedure TerminateScript(Reason: String); override; begin
+  WriteLn(Reason);
+  TerminateScript;
+end;
+
 procedure TFarmRun.DoFarmRun() begin
 
   if not ReadyTimer.IsFinished then begin

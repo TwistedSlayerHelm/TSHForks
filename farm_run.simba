@@ -19,7 +19,7 @@ type
     GUILD_FLOWER,
     GUILD_BUSH,
     GUILD_CACTUS,
-    MONESTARY_BUSH    
+    MONESTARY_BUSH
   );
 
   ETravelMethod = (
@@ -360,8 +360,13 @@ begin
       {leprechaun coords} [5846, 3544],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
-      {map coords}        [5590, 3396, 6166, 3840]];
-end;     
+      {map coords}        [5650, 3350, 6050, 3750]];
+end;
+
+procedure TerminateScript(Reason: String); override; begin
+  WriteLn(Reason);
+  TerminateScript;
+end;
 
 function ProgReport(
                            ResultType:int32; ScriptName, ScriptAuthor, ScriptVersion: String;
@@ -467,7 +472,9 @@ var
     SearchPt              : TPoint;
     SearchFiltered        : TPointArray;
   begin
-    if not (filterPt in Mainscreen.Bounds) then Exit(False);
+    if not (filterPt in Mainscreen.Bounds) then
+      Exit(False);
+
     if SRL.FindColors(borderTPA, Self.Data.BorderColor, MainScreen.Bounds) = 0 then
       Exit(False);
 
@@ -479,7 +486,7 @@ var
         SearchFiltered := Self.TPA.FilterDist(0, MainScreen.NormalizeDistance(140), Self.TPA[0].X, Self.TPA[0].Y);
         SearchFiltered := SearchFiltered.SortFrom(MainScreen.Center);
         SearchPt := SearchFiltered.Mean;
-        Self.SearchBox := Box(SearchPt, MainScreen.NormalizeDistance(12), MainScreen.NormalizeDistance(12));
+        Self.SearchBox := Box(SearchPt, MainScreen.NormalizeDistance(14), MainScreen.NormalizeDistance(14));
         Self.SearchBox.LimitTo(MainScreen.Bounds);
         RSClient.Image.Clear;
         //RSClient.Image.DrawRect(Self.TPA.MinAreaRect, CHAT_COLOR_LIGHT_PURPLE);
@@ -560,22 +567,27 @@ var
   function F(): Boolean;
   var
     Cuboids : TCuboidExArray;
+    FindBox : TBox;
     SearchTPA : TPointArray;
     LeprechaunTPA   : TPointArray;
   begin
-    Cuboids := Self.RSW^.GetCuboidArrayMS([Self.Data.LeprechaunCoords], [1.5, 1.5, 8]);
+    Cuboids := Self.RSW^.GetCuboidArrayMS([Self.Data.LeprechaunCoords], [1.5, 1.5, 8], [0, 0]);
 
     if Length(Cuboids) = 0 then
       Exit;
 
-    if SRL.FindColors(SearchTPA, Self.Data.LeprechaunColor, Cuboids[0].Bounds) = 0 then
+    FindBox := Cuboids[0].Bounds;
+    FindBox.LimitTo(MainScreen.Bounds);
+
+    //Writeln(Cuboids[0]);
+    if SRL.FindColors(SearchTPA, Self.Data.LeprechaunColor, FindBox) = 0 then
       Exit;
 
     LeprechaunTPA := Cuboids[0].Filter(SearchTPA);
 
     if LeprechaunTPA.Len = 0 then
       Exit;
-
+      
     Point := LeprechaunTPA.Mean;
     Result := True;
   end;
@@ -600,7 +612,7 @@ begin
               WriteLn('Failed to find leprechaun.');
               Exit;
             end;
-    end
+    end;
   end;
 
 end;
@@ -891,8 +903,9 @@ begin
 
   Self.CleanGrimyHerbs;
 
-  WriteLn('Noting items at ', '');
-  for i:=0 to High(LEPRECHAUN_ITEMS) do begin
+  WriteLn('Noting items at ', Self.CurrentPatch.Data.Name);
+
+  for I := 0 to High(LEPRECHAUN_ITEMS) do begin
     if Inventory.FindItem(item := LEPRECHAUN_ITEMS[i], slot) then begin
       slots += slot;
       items += item;
@@ -1213,7 +1226,6 @@ begin
 
   WriteLn('Planting ' + toStr(Self.CurrentPatch.Seed) + ' at ' + Self.CurrentPatch.Data.Name + ' patch.');
 
-  //Inventory.FindItem(Self.CurrentPatch.Seed, slot)
   if Inventory.GetSelectedSlot = -1 then begin
     if not Inventory.FindItem(Self.CurrentPatch.Seed, slot) then begin
       WriteLn('Couldn''t find seed in inventory.');
@@ -1268,9 +1280,9 @@ begin
     Exit;
   end;
 
-  Wait(472, 617);
-  Minimap.WaitPlayerMoving;
-  Wait(472, 617);
+  if WaitUntil(Minimap.IsPlayerMoving, 17, Random(713, 809)) then
+    while Minimap.IsPlayerMoving do
+      Wait(36, 58);
 
   if Chat.HasContinue then begin
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
@@ -1286,9 +1298,7 @@ begin
 
   if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
     if SRL.Dice(65) then begin
-      if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then
-        //TODO
-      else if Inventory.FindItem(compostItem, slot) then
+      if Inventory.FindItem(compostItem, slot) then
         Inventory.SetSelectedSlot(slot);
       Wait(78, 208);
       if SRL.Dice(65) then
@@ -1298,7 +1308,7 @@ begin
     end;
   end;
 
-    XPBar.EarnedXP;
+  XPBar.EarnedXP;
   if WaitUntil(((not Self.CurrentPatch.IsEmpty) or XPBar.EarnedXP), 15, 10000) then begin
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
@@ -1326,6 +1336,7 @@ end;
 procedure TFarmRun.Harvest();
 var
   i, slot         : Int32;
+  HarvestTimer    : TCountdown;
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1359,9 +1370,9 @@ begin
     Exit;
   end;
 
-  Wait(742, 1129);
-  Minimap.WaitPlayerMoving;
-  Wait(352, 567);
+  if WaitUntil(Minimap.IsPlayerMoving, 17, Random(707, 803)) then
+    while Minimap.IsPlayerMoving do
+      Wait(17, 28);
 
   if not Self.CurrentPatch.Find(False) then
     Exit;
@@ -1374,15 +1385,23 @@ begin
       Mouse.Move(Self.CurrentPatch.SearchBox);
   end;
 
+  HarvestTimer.Init(4000);
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
-    if Self.CurrentPatch.IsEmpty then begin
-      Plant;
-      Exit;
-    end else if Inventory.IsFull then begin
+
+    if XPBar.EarnedXP then
+      HarvestTimer.Restart;
+
+    if Inventory.IsFull then begin
       Inventory.SetSelectedSlot(-1);
       Wait(532, 718);
       Self.NoteItems;
       Harvest;
+      Exit;
+    end;
+
+    if HarvestTimer.IsFinished or Self.CurrentPatch.IsEmpty then begin
+      Plant;
+      Exit;
     end;
 
     HarvestWait;
@@ -1435,9 +1454,6 @@ begin
 
   if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
-  end else if MainScreen.IsUpText('Clear') then begin
-    Self.CurrentPatch.Complete := True;
-    Exit;
   end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
     if ChooseOption.HasOption('Clear') then begin
       Self.CurrentPatch.Complete := True
@@ -1461,8 +1477,8 @@ begin
 
   if SRL.Dice(65) then
     Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-    else
-      Mouse.Move(Self.CurrentPatch.SearchBox);
+  else
+    Mouse.Move(Self.CurrentPatch.SearchBox);
 
   for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
     if Mainscreen.IsUpText('ear') then begin
@@ -1658,6 +1674,8 @@ var
   spell           : ERSSpell        := ERSSpell.BAKE_PIE;
   b: TBox;
 begin
+  WriteLn('Teleporting to', Self.CurrentPatch.Data.Name);
+
   if not RSClient.IsLoggedIn then
     Exit;
 
@@ -1678,6 +1696,7 @@ begin
   if Self.RSW.GetMyPos in Self.CurrentPatch.Data.MapCoords then begin
     Exit;
   end;
+
 
   case TravelMethod of
     ETravelMethod.ICY_BASALT:
@@ -1923,12 +1942,8 @@ var
   variants                  : TVariantArray;
   i                         : Int32;
 begin
-  strings := [{'Runtime', 'Xp gained', 'Xp per hour', }'Runs complete'];
-  variants := [
-  //{runtime}         SRL.MsToTime(Self.Runtime.ElapsedTime, Time_Short),
-  //{xp gained}       ToStr(Self.XPGained),
-  //{xp per hour}     NumberPerHour(Self.XPGained, Self.Runtime.ElapsedTime),
-  {runs complete}   Self.RunsComplete];
+  strings := ['Runs complete'];
+  variants := [Self.RunsComplete];
 
   for i:= 0 to High(LEPRECHAUN_ITEMS) do begin
     if Self.HarvestQuantities[i] > 0 then begin
@@ -1937,7 +1952,7 @@ begin
     end;
   end;
 
-  ProgReport(1, 'Farm Run Progress Report','Club XJ', '', strings, variants);
+  ProgReport(1, 'Farm Run Report','XJ & Student', '', strings, variants);
 end;
 
 procedure TFarmRun.Init();
@@ -2061,7 +2076,6 @@ end;
 procedure TFarmRun.DoFarmRun() begin
 
   if not ReadyTimer.IsFinished then begin
-    //WriteLn('Next farm run in ' + ToStr(Round(Self.ReadyTimer.TimeRemaining() / ONE_MINUTE)) + ' minutes.');
     Exit;
   end;
 
@@ -2070,16 +2084,3 @@ procedure TFarmRun.DoFarmRun() begin
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
 
 end;
-
-{var
-  Farm : TFarmRun;
-begin
-
-  Farm.AddPatch(EFarmPAtch.CATHERBY_ALLOT_S, ETravelMethod.CATHERBY_TELEPORT, 'guam seed');
-  Farm.Init;
-  while true do begin
-    Farm.Patches[0].Find;
-    Wait(50);
-  end;
-
-end.}

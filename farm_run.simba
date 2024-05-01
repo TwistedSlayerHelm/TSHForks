@@ -1297,7 +1297,7 @@ begin
   end;
 
   if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
-    if SRL.Dice(65) then begin
+    If SRL.Dice(65) and (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
       if Inventory.FindItem(compostItem, slot) then
         Inventory.SetSelectedSlot(slot);
       Wait(78, 208);

@@ -32,6 +32,7 @@ type
    ARDY_CLOAK_2,          {Ardy}
    ARDY_CLOAK_3,          {Ardy}
    ARDY_CLOAK_4,          {Ardy}
+   ARDY_CLOAK_1_BUSH,     {Monastery}
    ARDY_CLOAK_2_BUSH,     {Monastery}
    ARDY_CLOAK_3_BUSH,     {Monastery}
    ARDY_CLOAK_4_BUSH,     {Monastery}
@@ -319,7 +320,7 @@ begin
       {leprechaun coords} [336, 1532],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/limp}
       {patch type}        EPatchType.FLOWER,
@@ -329,7 +330,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/bush}
       {patch type}        EPatchType.BUSH,
@@ -339,7 +340,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild bush',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/cactus}
       {patch type}        EPatchType.CACTUS,
@@ -349,7 +350,7 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild cactus',
-      {map coords}        [ 200, 1300,  600, 1700]];
+      {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Monestary/bush}
       {patch type}        EPatchType.BUSH,
@@ -578,7 +579,7 @@ var
     FindBox := Cuboids[0].Bounds;
     FindBox.LimitTo(MainScreen.Bounds);
 
-    Writeln(Cuboids[0]);
+    //Writeln(Cuboids[0]);
     if SRL.FindColors(SearchTPA, Self.Data.LeprechaunColor, FindBox) = 0 then
       Exit;
 
@@ -586,7 +587,7 @@ var
 
     if LeprechaunTPA.Len = 0 then
       Exit;
-
+      
     Point := LeprechaunTPA.Mean;
     Result := True;
   end;
@@ -642,10 +643,10 @@ begin
   if not Self.Find then
     Exit(EPatchState.FAILED);
 
-  if Self.Data.PatchType = EPatchType.CACTUS then
-    Exit(EPatchState.HARVEST_CACTUS);
   if Self.Data.PatchType = EPatchType.BUSH then
     Exit(EPatchState.HARVEST_WHITEBERRIES);
+  if Self.Data.PatchType = EPatchType.CACTUS then
+    Exit(EPatchState.HARVEST_CACTUS);
   if Self.IsEmpty then
     Exit(EPatchState.PLANT);
   if Self.IsDiseased then
@@ -1807,6 +1808,13 @@ begin
         if not Inventory.ClickItem(item, 'Teleport') then
           Equipment.ClickItem(item, 'Teleport');
       end;
+    ETravelMethod.ARDY_CLOAK_1_BUSH:
+      begin
+        item := 'Ardougne cloak 1';
+        wait(250,500);
+        if not Inventory.ClickItem(item, 'Monastery Teleport') then
+          Equipment.ClickItem(item, 'Kandarin Monastery');
+      end;
     ETravelMethod.ARDY_CLOAK_2:
       begin
         item := 'Ardougne cloak 2';
@@ -2058,6 +2066,11 @@ begin
 
   Self.XPGained += XPBar.Read - Self.LastXPRead;
   Self.Report;
+end;
+
+procedure TerminateScript(Reason: String); override; begin
+  WriteLn(Reason);
+  TerminateScript;
 end;
 
 procedure TFarmRun.DoFarmRun() begin

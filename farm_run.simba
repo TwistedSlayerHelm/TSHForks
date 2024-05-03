@@ -45,6 +45,7 @@ type
    FENKENSTRAIN_TELEPORT, {Phasmatys}
    ECTOPHIAL,             {Phasmatys}
    FARMING_CAPE,          {Guild}
+   FARMING_CAPE_TRIMMED,  {Guild}
    SKILLS_NECKLACE,       {Guild}
    HOUSE_TAB_SPIRIT_TREE_GUILD,
    HOUSE_TELE_SPIRIT_TREE_GUILD
@@ -587,7 +588,7 @@ var
 
     if LeprechaunTPA.Len = 0 then
       Exit;
-      
+
     Point := LeprechaunTPA.Mean;
     Result := True;
   end;
@@ -1674,7 +1675,7 @@ var
   spell           : ERSSpell        := ERSSpell.BAKE_PIE;
   b: TBox;
 begin
-  WriteLn('Teleporting to', Self.CurrentPatch.Data.Name);
+  WriteLn('Teleporting to ' + Self.CurrentPatch.Data.Name);
 
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1696,7 +1697,6 @@ begin
   if Self.RSW.GetMyPos in Self.CurrentPatch.Data.MapCoords then begin
     Exit;
   end;
-
 
   case TravelMethod of
     ETravelMethod.ICY_BASALT:
@@ -1781,8 +1781,14 @@ begin
       end;
     ETravelMethod.FARMING_CAPE:
       begin
-        items := (['Farming cape', 'Farming cape(t)']);
-        for item in items do
+        item := 'Farming cape';
+        wait(250,500);
+        if not Equipment.ClickItem(item, 'Teleport') then
+          Inventory.ClickItem(item, 'Teleport');
+      end;
+    ETravelMethod.FARMING_CAPE_TRIMMED:
+      begin
+        item := 'Farming cape(t)';
         wait(250,500);
         if not Equipment.ClickItem(item, 'Teleport') then
           Inventory.ClickItem(item, 'Teleport');

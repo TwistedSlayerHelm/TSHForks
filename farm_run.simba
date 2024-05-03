@@ -45,7 +45,6 @@ type
    FENKENSTRAIN_TELEPORT, {Phasmatys}
    ECTOPHIAL,             {Phasmatys}
    FARMING_CAPE,          {Guild}
-   FARMING_CAPE_TRIMMED,  {Guild}
    SKILLS_NECKLACE,       {Guild}
    HOUSE_TAB_SPIRIT_TREE_GUILD,
    HOUSE_TELE_SPIRIT_TREE_GUILD
@@ -1781,14 +1780,8 @@ begin
       end;
     ETravelMethod.FARMING_CAPE:
       begin
-        item := 'Farming cape';
-        wait(250,500);
-        if not Equipment.ClickItem(item, 'Teleport') then
-          Inventory.ClickItem(item, 'Teleport');
-      end;
-    ETravelMethod.FARMING_CAPE_TRIMMED:
-      begin
-        item := 'Farming cape(t)';
+        items := (['Farming cape', 'Farming cape(t)']);
+        for item in items do
         wait(250,500);
         if not Equipment.ClickItem(item, 'Teleport') then
           Inventory.ClickItem(item, 'Teleport');

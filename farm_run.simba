@@ -1880,7 +1880,7 @@ begin
           Mouse.Click(b, MOUSE_LEFT);
         end
         else
-          Equipment.ClickItem(item, 'Farming guild');
+          Equipment.ClickItem(item, 'Farming Guild');
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin

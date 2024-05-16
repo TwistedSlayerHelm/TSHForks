@@ -148,7 +148,11 @@ const
     'Kwuarm', 'Snapdragon',
     'Cadantine', 'Lantadyme',
     'Dwarf weed', 'Torstol',
-    'Limpwurt root', 'Snape grass',
+    'Limpwurt root', 'Potato',
+    'Onion', 'Cabbage', 
+    'Tomato', 'Sweetcorn',
+    'Strawberry', 'Watermelon',
+    'Snape grass',
     'White berries', 'Potato cactus'
     ];
 

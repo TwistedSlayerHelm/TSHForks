@@ -116,6 +116,7 @@ type
     RSW                             : TRSWalker;
     PatchesCompleted                : Int32;
     PatchesSkipped                  : Int32;
+    ProfitCalcFR                    : Int32;
     ResurrectCrop                   : Boolean;
     CompostMethod                   : ECompostMethod;
 
@@ -1966,6 +1967,8 @@ begin
   end;
 
   ProgReport(1, 'Farm Run Report','XJ & Student', '', strings, variants);
+
+  ProfitCalcFR := (ItemData.GetAverage(LEPRECHAUN_ITEMS[i]) * Self.HarvestQuantities[i]);
 end;
 
 procedure TFarmRun.Init();

@@ -149,7 +149,7 @@ const
     'Cadantine', 'Lantadyme',
     'Dwarf weed', 'Torstol',
     'Limpwurt root', 'Potato',
-    'Onion', 'Cabbage', 
+    'Onion', 'Cabbage',
     'Tomato', 'Sweetcorn',
     'Strawberry', 'Watermelon',
     'Snape grass',
@@ -1335,7 +1335,7 @@ begin
 
 
   repeat
-    if Length(MainScreen.FindHitsplats(MainScreen.GetPlayerBox)) > 1 then begin
+    if (Length(MainScreen.FindHitsplats(MainScreen.GetPlayerBox)) > 1) then begin
       WriteLn('Combat detected in Port Phasmatys. Running away.');
       T.Init(ONE_MINUTE);
       repeat

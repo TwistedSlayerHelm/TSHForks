@@ -311,8 +311,8 @@ begin
       {border color}      CTS2(2646105, 4, 0.14, 0.45),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [9814, 2330],
-      {leprechaun coords} [9780, 2359],
-      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {leprechaun coords} [9780, 2360],
+      {leprechaun color}  CTS2(2385461, 9, 0.09, 1.08),
       {name}              'Port Phasmatys herb',
       {map coords}        [9385, 2036, 10384, 2680]];
 

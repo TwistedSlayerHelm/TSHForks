@@ -1968,6 +1968,15 @@ begin
   ProgReport(1, 'Farm Run Report','XJ & Student', '', strings, variants);
 end;
 
+operator in(Left: TBox; Right: TBoxArray): Boolean;
+var
+  I : Int32;
+begin
+  for I := 0 to High(Right) do
+    if Left = Right[I] then
+      Exit(True);
+end;
+
 procedure TFarmRun.Init();
 var
   tmp: TBoxArray;
@@ -1976,8 +1985,10 @@ begin
   if not RSClient.IsLoggedIn then
     Login.LoginPlayer;
 
-  for i := 0 to High(Self.Patches) do
-    tmp += Self.Patches[i].Data.MapCoords;
+  for i := 0 to High(Self.Patches) do begin
+    if not (Self.Patches[i].Data.MapCoords in tmp) then
+      tmp += Self.Patches[i].Data.MapCoords;
+  end;
 
   Self.RSW.SetupRegions(tmp);
   Self.RSW.AdaptiveWalk := True;

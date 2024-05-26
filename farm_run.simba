@@ -104,7 +104,6 @@ type
     EmptyUpText                     : String;
     PlantedUpText                   : String;
     HarvestUpText                   : String;
-    RSW                             : PRSWalker;
     Complete                        : Boolean;
     Skip                            : Boolean;
   end;
@@ -113,7 +112,6 @@ type
     Patches                         : array of TFarmPatch;
     CurrentPatch                    : TFarmPatch;
     InactivityTimer                 : TCountdown;
-    RSW                             : TRSWalker;
     PatchesCompleted                : Int32;
     PatchesSkipped                  : Int32;
     ResurrectCrop                   : Boolean;
@@ -460,7 +458,7 @@ begin
   if data.PatchType = EPatchType.HERB then
     planted := 'Herb';
   Self.Patches += [data, tpa, searchBox, travel, seed,
-                   empty, planted, harvest, @Self.RSW];
+                   empty, planted, harvest];
 end;
 
 function TFarmPatch.Find(retry: Boolean = True): Boolean;
@@ -472,7 +470,7 @@ var
     borderTPA             : TPointArray;
     borderATPA            : T2DPointArray;
     i                     : Int32;
-    filterPt              : TPoint      := Self.RSW^.GetTileMS(Self.Data.Coords).Mean;
+    filterPt              : TPoint      := ScriptWalker^.GetTileMS(Self.Data.Coords).Mean;
     SearchPt              : TPoint;
     SearchFiltered        : TPointArray;
   begin
@@ -513,15 +511,15 @@ begin
 
     case attempts of
       0:    begin
-              if not Self.RSW^.MakePointVisible(Self.Data.Coords) then begin
-                Self.RSW^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
-                Self.RSW^.MakePointVisible(Self.Data.Coords);
+              if not ScriptWalker^.MakePointVisible(Self.Data.Coords) then begin
+                ScriptWalker^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
+                ScriptWalker^.MakePointVisible(Self.Data.Coords);
               end
             end;
       1:    Antiban.RandomRotate;
       2:    begin
-              Self.RSW^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
-              Self.RSW^.MakePointVisible(Self.Data.Coords);
+              ScriptWalker^.WebWalk([Self.Data.Coords.X + 4, Self.Data.Coords.Y + 4]);
+              ScriptWalker^.MakePointVisible(Self.Data.Coords);
             end;
       3:    begin
               WriteLn('Failed to find patch.');
@@ -575,7 +573,7 @@ var
     SearchTPA : TPointArray;
     LeprechaunTPA   : TPointArray;
   begin
-    Cuboids := Self.RSW^.GetCuboidArrayMS([Self.Data.LeprechaunCoords], [1.5, 1.5, 8], [0, 0]);
+    Cuboids := ScriptWalker^.GetCuboidArrayMS([Self.Data.LeprechaunCoords], [1.5, 1.5, 8], [0, 0]);
 
     if Length(Cuboids) = 0 then
       Exit;
@@ -606,9 +604,9 @@ begin
 
     case attempts of
       0, 2: begin
-              if not Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords) then begin
-                Self.RSW^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
-                Self.RSW^.MakePointVisible(Self.Data.LeprechaunCoords);
+              if not ScriptWalker^.MakePointVisible(Self.Data.LeprechaunCoords) then begin
+                ScriptWalker^.WebWalk([Self.Data.LeprechaunCoords.X + 4, Self.Data.LeprechaunCoords.Y + 4]);
+                ScriptWalker^.MakePointVisible(Self.Data.LeprechaunCoords);
               end
             end;
       1:    Antiban.RandomRotate;
@@ -641,7 +639,7 @@ begin
   if Minimap.InPOH then
     Exit(EPatchState.TELEPORT_TO);
 
-  if not (Self.RSW^.GetMyPos in Self.Data.MapCoords) then
+  if not (ScriptWalker^.GetMyPos in Self.Data.MapCoords) then
     Exit(EPatchState.TELEPORT_TO);
 
   if not Self.Find then
@@ -923,7 +921,7 @@ begin
   for i := 0 to High(slots) do begin
     Mainscreen.CloseInterface;
 
-    if Self.RSW.GetMyPos = Self.CurrentPatch.Data.LeprechaunCoords then begin
+    if ScriptWalker^.GetMyPos = Self.CurrentPatch.Data.LeprechaunCoords then begin
       playerBox := Mainscreen.GetPlayerBox;
       playerBox.Y1 := playerBox.Y1 - Floor(playerBox.Height / 2);
       lepPT := playerBox.Middle;
@@ -1328,7 +1326,7 @@ var
 begin
   T.Init(300);
 
-  if not (Self.RSW.GetMyPos in PatchData[EFarmPatch.PHASMATYS_HERB].MapCoords) then begin
+  if not (ScriptWalker^.GetMyPos in PatchData[EFarmPatch.PHASMATYS_HERB].MapCoords) then begin
     Wait(T.TimeRemaining);
     Exit;
   end;
@@ -1339,8 +1337,8 @@ begin
       WriteLn('Combat detected in Port Phasmatys. Running away.');
       T.Init(ONE_MINUTE);
       repeat
-        Self.RSW.WebWalk([10030, 2320], 50);
-      until (Self.RSW.GetMyPos.DistanceTo([10030, 2320]) <= 50) or T.IsFinished;
+        ScriptWalker^.WebWalk([10030, 2320], 50);
+      until (ScriptWalker^.GetMyPos.DistanceTo([10030, 2320]) <= 50) or T.IsFinished;
       Self.CurrentPatch.Skip := True;
       Break;
     end;
@@ -1668,17 +1666,6 @@ begin
   KeyBoard.KeyUp(VK_B);
 end;
 
-procedure TFarmRun.TeleportFirstPatch();
-var
-  Pos : TPoint;
-begin
-  Pos := Self.RSW.GetMyPos;
-
-  Self.TeleportTo(Self.Patches[0].TravelMethod, False);
-  Wait(3250, 3750);
-  WaitUntil((Self.RSW.GetMyPos <> Pos), 115, 5000);
-end;
-
 procedure TFarmRun.TeleportTo(TravelMethod : ETravelMethod; ConfirmPos : Boolean);
 label
   teleport_complete;
@@ -1707,7 +1694,7 @@ begin
     end;
   end;
 
-  if Self.RSW.GetMyPos in Self.CurrentPatch.Data.MapCoords then begin
+  if ScriptWalker^.GetMyPos in Self.CurrentPatch.Data.MapCoords then begin
     Exit;
   end;
 
@@ -1942,7 +1929,7 @@ begin
   if not ConfirmPos then
     Exit;
 
-  if not WaitUntil((Self.RSW.GetMyPos in Self.CurrentPatch.Data.MapCoords), 10, 10000) then
+  if not WaitUntil((ScriptWalker^.GetMyPos in Self.CurrentPatch.Data.MapCoords), 10, 10000) then
     Exit;
 
   if (SRL.Dice(75) and (Inventory.CountEmptySlots <= 6)) or Inventory.IsFull then
@@ -1981,6 +1968,7 @@ procedure TFarmRun.Init();
 var
   tmp: TBoxArray;
   i: Int32;
+  rsw: TRSWalker;
 begin
   if not RSClient.IsLoggedIn then
     Login.LoginPlayer;
@@ -1990,8 +1978,13 @@ begin
       tmp += Self.Patches[i].Data.MapCoords;
   end;
 
-  Self.RSW.SetupRegions(tmp);
-  Self.RSW.AdaptiveWalk := True;
+  if ScriptWalker = nil then
+  begin
+    rsw.SetupRegions(tmp);
+    rsw.AdaptiveWalk := True;
+  end
+  else
+    ScriptWalker^.AddRegions(tmp);
 
   Self.InactivityTimer.Init(6*ONE_MINUTE);
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));

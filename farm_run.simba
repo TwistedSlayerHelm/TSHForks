@@ -151,7 +151,7 @@ const
     'Tomato', 'Sweetcorn',
     'Strawberry', 'Watermelon',
     'Snape grass',
-    'White berries', 'Potato cactus'
+    'White berries', 'Potato cactus', 'Cactus spine'
     ];
 
   CONTRACT_TEXT     : TStringArray = [
@@ -169,7 +169,7 @@ const
     'snape grass', 'watermelon', 'strawberr', 'sweetcorn', 'tomatoe',
     'cabbage', 'onion', 'potatoe',
 
-    'potato cacti', 'cacti',
+    'potato cacti', 'cacti', 
 
     'celastrus',
 

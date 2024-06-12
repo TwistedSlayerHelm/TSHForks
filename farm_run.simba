@@ -17,6 +17,8 @@ type
     PHASMATYS_HERB,
     GUILD_HERB,
     GUILD_FLOWER,
+    GUILD_ALLOT_N,
+    GUILD_ALLOT_S,
     GUILD_BUSH,
     GUILD_CACTUS,
     MONESTARY_BUSH
@@ -332,6 +334,26 @@ begin
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild herb',
+      {map coords}        [  45, 1263,  648, 1721]];
+
+  PatchData += [    {Guild/north allotment}
+      {patch type}        EPatchType.ALLOTMENT,
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {patch coords}      [462, 1527],
+      {leprechaun coords} [440, 1536],
+      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {name}              'Farming Guild north allotment',
+      {map coords}        [  45, 1263,  648, 1721]];
+
+  PatchData += [    {Guild/south allotment}
+      {patch type}        EPatchType.ALLOTMENT,
+      {border color}      CTS2(5332322, 17, 0.14, 0.10),
+      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {patch coords}      [462, 1555],
+      {leprechaun coords} [440, 1536],
+      {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
+      {name}              'Farming Guild south allotment',
       {map coords}        [  45, 1263,  648, 1721]];
 
   PatchData += [    {Guild/bush}

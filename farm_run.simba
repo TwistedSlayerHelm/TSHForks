@@ -351,7 +351,7 @@ begin
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
       {soil color}        CTS2(2972511, 10, 0.53, 0.59),
-      {patch coords}      [462, 1555],
+      {patch coords}      [463, 1555],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild south allotment',

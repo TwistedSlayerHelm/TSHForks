@@ -48,6 +48,7 @@ type
    ECTOPHIAL,             {Phasmatys}
    FARMING_CAPE,          {Guild}
    SKILLS_NECKLACE,       {Guild}
+   NONE,                  {Guild}
    HOUSE_TAB_SPIRIT_TREE_GUILD,
    HOUSE_TELE_SPIRIT_TREE_GUILD
   );
@@ -1894,6 +1895,9 @@ begin
         end
         else
           Equipment.ClickItem(item, 'Farming Guild');
+      end;
+    ETravelMethod.NONE:
+      begin
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin

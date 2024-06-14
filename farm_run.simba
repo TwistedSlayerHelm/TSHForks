@@ -21,7 +21,9 @@ type
     GUILD_ALLOT_S,
     GUILD_BUSH,
     GUILD_CACTUS,
-    MONESTARY_BUSH
+    MONESTARY_BUSH,
+    GIANT_SEAWEED_NORTH,
+    GIANT_SEAWEED_SOUTH
   );
 
   ETravelMethod = (
@@ -41,6 +43,7 @@ type
    XERICS_TALISMAN,       {Hosidious}
    HOSIDIOUS_TABLET,      {Hosidious}
    HOUSE_TELEPORT,        {Hosidious}
+   CON_CAPE_HOSIDIUS,      {Hosidious}
    EXPLORERS_RING_2,      {Fally}
    EXPLORERS_RING_3,      {Fally}
    EXPLORERS_RING_4,      {Fally}
@@ -49,6 +52,7 @@ type
    FARMING_CAPE,          {Guild}
    SKILLS_NECKLACE,       {Guild}
    NONE,                  {Guild}
+   DIGSITE_TO_SEAWEED,    {Underwater}
    HOUSE_TAB_SPIRIT_TREE_GUILD,
    HOUSE_TELE_SPIRIT_TREE_GUILD
   );
@@ -66,7 +70,8 @@ type
     FLOWER,
     BUSH,
     ALLOTMENT,
-    CACTUS
+    CACTUS,
+    SEAWEED
   );
 
   EPatchState = (
@@ -81,7 +86,8 @@ type
     COMPLETE,
     SKIP,
     HARVEST_WHITEBERRIES,
-    HARVEST_CACTUS
+    HARVEST_CACTUS,
+    HARVEST_SEAWEED
   );
 
   TFarmContract = record
@@ -128,6 +134,9 @@ type
     DoReport, DoBreak               : Boolean;
     Transport                       : TUniversalTransport;
     ReadyTimer                      : TCountDown;
+    BoatyShore                      : TRSObject;
+    BoatyIsland                     : TRSObject;
+    BargeAttendant                  : TRSObject;
   end;
 
 const
@@ -154,7 +163,8 @@ const
     'Tomato', 'Sweetcorn',
     'Strawberry', 'Watermelon',
     'Snape grass',
-    'White berries', 'Potato cactus', 'Cactus spine'
+    'White berries', 'Potato cactus',
+    'Cactus spine', 'Giant seaweed'
     ];
 
   CONTRACT_TEXT     : TStringArray = [
@@ -172,7 +182,7 @@ const
     'snape grass', 'watermelon', 'strawberr', 'sweetcorn', 'tomatoe',
     'cabbage', 'onion', 'potatoe',
 
-    'potato cacti', 'cacti', 
+    'potato cacti', 'cacti',
 
     'celastrus',
 
@@ -341,7 +351,7 @@ begin
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
       {soil color}        CTS2(2972511, 10, 0.53, 0.59),
-      {patch coords}      [462, 1527],
+      {patch coords}      [461, 1530],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild north allotment',
@@ -351,7 +361,7 @@ begin
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
       {soil color}        CTS2(2972511, 10, 0.53, 0.59),
-      {patch coords}      [459, 1550],
+      {patch coords}      [463, 1552],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Farming Guild south allotment',
@@ -386,6 +396,26 @@ begin
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
       {map coords}        [5650, 3350, 6050, 3750]];
+
+  PatchData += [    {Underwater/North Seaweed}
+      {patch type}        EPatchType.SEAWEED,
+      {border color}      CTS2(5137746, 3, 0.80, 0.74),
+      {soil color}        CTS2(5925985, 3, 1.00, 0.59),
+      {patch coords}      [1282, 5616],
+      {leprechaun coords} [1276, 5626],
+      {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
+      {name}              'Giant seaweed north',
+      {map coords}        [1129, 5407, 1769, 5824]];
+
+    PatchData += [    {Underwater/South Seaweed}
+      {patch type}        EPatchType.SEAWEED,
+      {border color}      CTS2(5137746, 3, 0.80, 0.74),
+      {soil color}        CTS2(5925985, 3, 1.00, 0.59),
+      {patch coords}      [1282, 5640],
+      {leprechaun coords} [1276, 5626],
+      {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
+      {name}              'Giant seaweed south',
+      {map coords}        [1129, 5407, 1769, 5824]];
 end;
 
 procedure TerminateScript(Reason: String); override; begin
@@ -469,8 +499,8 @@ end;
 
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);
 var
-  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus'];
-  harvestUpText : TStringArray := ['Pick', 'Pick', 'Pick', 'Harvest', 'Pick'];
+  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'Seaweed patch'];
+  harvestUpText : TStringArray := ['ick', 'ick', 'ick', 'arves', 'ick', 'ick'];
   data : TPatchData := PatchData[patch];
   tpa  : TPointArray := [];
   searchBox : TBox := [0, 0, 0, 0];
@@ -503,7 +533,7 @@ var
     if SRL.FindColors(borderTPA, Self.Data.BorderColor, MainScreen.Bounds) = 0 then
       Exit(False);
 
-    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(25));
+    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(40));
     for i := 0 to High(borderATPA) do begin
       Self.TPA := borderATPA[i].ConvexHull.Connect;
       if SRL.PointInPoly(filterPt, Self.TPA) then begin
@@ -532,6 +562,7 @@ begin
     if F() then
       Exit(True);
 
+    Try
     case attempts of
       0:    begin
               if not ScriptWalker^.MakePointVisible(Self.Data.Coords) then begin
@@ -548,7 +579,10 @@ begin
               WriteLn('Failed to find patch.');
               Exit;
             end;
-    end
+    end;
+    Except
+    Exit;
+    end;
   end;
 end;
 
@@ -1689,6 +1723,93 @@ begin
   KeyBoard.KeyUp(VK_B);
 end;
 
+procedure TFarmRun.TravelToGiantSeaweed();
+var
+  T : TCountdown;
+  b : TBox;
+  MyPos : TPoint;
+  item            : TRSItem         := '';
+begin
+
+  T.init(one_minute);
+
+  repeat
+    MyPos := ScriptWalker^.GetMyPos;
+
+    if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
+      for 1 to 3 do begin
+        if not ScriptWalker^.AtTile([8832,2672], 16) then
+          ScriptWalker^.WebWalk([8832,2672]);
+
+        BargeAttendant.SelectOption(['Quick-Travel'], 10);
+
+        if WaitUntil(ScriptWalker^.GetMyPos().InBox([9113, 908, 9467, 1266]), 15, 5000) then
+          Break;
+      end;
+    end
+    else
+    if MyPos.InBox([9113, 908, 9467, 1266]) then begin
+      for 1 to 3 do begin
+        Wait(750,1000);
+        BoatyShore.WalkSelectOption(['Travel '], 10);
+
+        if WaitUntil(Chat.FindOption('Row out to sea', [CHAT_COLOR_BLACK]), 15, 5000) then begin
+          b := ([146,431,371,435]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          if WaitUntil(ScriptWalker^.GetMyPos().InBox([9303, 530, 9657, 888]), 15, 5000) then
+            Break;
+        end;
+      end;
+    end
+    else
+    if MyPos.InBox([9303, 530, 9657, 888]) then begin
+      for 1 to 3 do begin
+        Wait(750,1000);
+        BoatyIsland.WalkSelectOption(['Dive '], 10);
+        WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
+
+        if Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) then begin
+          b := ([67,399,442,403]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]), 15, 10000);
+        end;
+
+        if (ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) then
+          Break;
+
+        if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then
+          Chat.ClickContinue(True);
+
+        if Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK]) then begin
+          b := ([120,412,401,421]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          if Chat.FindOption('to Mairin', [CHAT_COLOR_BLACK])then
+            Chat.ClickContinue(True);
+
+          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
+            Break;
+        end;
+      end;
+    end
+    else
+    begin
+      item := 'Digsite pendant (5)';
+      wait(250,500);
+      if Inventory.ClickItem(item, 'Rub') and WaitUntil(Chat.FindOption('Digsite', [CHAT_COLOR_BLACK]), 10, 10000) then begin
+        b := ([241,396,279,406]);
+        Mouse.Click(b, MOUSE_LEFT);
+      end
+      else
+        Equipment.ClickItem(item, 'Digsite');
+
+      WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
+    end;
+  until ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or T.IsFinished;
+end;
+
 procedure TFarmRun.TeleportTo(TravelMethod : ETravelMethod; ConfirmPos : Boolean);
 label
   teleport_complete;
@@ -1802,6 +1923,17 @@ begin
         else
           Magic.CastSpell(ERSSpell.TELEPORT_TO_HOUSE, 'Outside');
       end;
+     ETravelMethod.CON_CAPE_HOSIDIUS:
+    begin
+        items := (['Construct. cape', 'Construct. cape(t)']);
+        for item in items do
+        wait(250,500);
+        if not Inventory.ClickItem(item, 'Teleport') then
+          Equipment.ClickItem(item, 'Teleport');
+        WaitUntil(Mainscreen.HasInterface(), 10, 5000);
+        b := ([235,144,278,148]);
+        Mouse.Click(b, MOUSE_LEFT);
+      end;
     ETravelMethod.FARMING_CAPE:
       begin
         items := (['Farming cape', 'Farming cape(t)']);
@@ -1882,9 +2014,7 @@ begin
       end;
     ETravelMethod.SKILLS_NECKLACE:
       begin
-        items := (['Skills necklace(6)', 'Skills necklace(5)', 'Skills necklace(4)', 'Skills necklace(3)',
-                   'Skills necklace(2)', 'Skills necklace(1)']);
-        for item in items do
+        item := 'Skills necklace(6)';
         wait(250,500);
         if Inventory.ContainsItem(item) then
         begin
@@ -1898,6 +2028,11 @@ begin
       end;
     ETravelMethod.NONE:
       begin
+      end;
+    ETravelMethod.DIGSITE_TO_SEAWEED:
+      begin
+          Self.TravelToGiantSeaweed();
+          Exit;
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin
@@ -2011,6 +2146,19 @@ begin
   end
   else
     ScriptWalker^.AddRegions(tmp);
+
+  BoatyShore.SetupCoordinates([[9294,1075]]);
+  BoatyShore.SetupUpText(['ravel']);
+  BoatyShore.Finder.Colors += CTS2(6124929, 5, 0.15, 0.13);
+
+  BoatyIsland.SetupCoordinates([[9463,704]]);
+  BoatyIsland.SetupUpText(['ravel']);
+  BoatyIsland.Finder.Colors += CTS2(5401465, 20, 0.02, 0.23);
+
+  BargeAttendant.ShapeArray += [[2, 2, 7], 0];
+  BargeAttendant.SetupCoordinates([[8840, 2663]]);
+  BargeAttendant.SetupUpText(['uard']);
+  BargeAttendant.Finder.Colors += CTS2(1911645, 6, 0.08, 0.27);
 
   Self.InactivityTimer.Init(6*ONE_MINUTE);
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));

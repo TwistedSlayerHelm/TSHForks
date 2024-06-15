@@ -1,4 +1,6 @@
-{$include_once WaspLib/optional/handlers/teleports/transport.simba}
+{$IFNDEF WL_OSR}
+  {$I WaspLib/osr.simba}
+{$ENDIF} 
 
 type
   EFarmPatch = (
@@ -132,7 +134,6 @@ type
     HarvestQuantities               : TIntegerArray;
     XPGained, LastXPRead            : Int32;
     DoReport, DoBreak               : Boolean;
-    Transport                       : TUniversalTransport;
     ReadyTimer                      : TCountDown;
     BoatyShore                      : TRSObject;
     BoatyIsland                     : TRSObject;

@@ -1,6 +1,6 @@
 {$IFNDEF WL_OSR}
   {$I WaspLib/osr.simba}
-{$ENDIF} 
+{$ENDIF}
 
 type
   EFarmPatch = (
@@ -1484,6 +1484,7 @@ end;
 procedure TFarmRun.HarvestWhiteBerries();
 var
   i        : Int32;
+  HarvestTimer : TCountdown;
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1550,7 +1551,12 @@ begin
   else
     Mouse.Move(Self.CurrentPatch.SearchBox);
 
-  for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
+  HarvestTimer.Init(4000);
+  while not HarvestTimer.IsFinished do begin
+
+    if XPBar.EarnedXP then
+      HarvestTimer.Restart;
+
     if Mainscreen.IsUpText('ear') then begin
       Self.CurrentPatch.Complete := True;
       Exit;
@@ -1566,6 +1572,7 @@ end;
 procedure TFarmRun.HarvestCactus();
 var
   i        : Int32;
+  HarvestTimer: TCountdown;
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1635,7 +1642,12 @@ begin
   else
     Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
 
-  for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
+  HarvestTimer.Init(4000);
+  while not HarvestTimer.IsFinished do begin
+
+    if XPBar.EarnedXP then
+      HarvestTimer.Restart;
+
     if Mainscreen.IsUpText('ear') then begin
       Self.CurrentPatch.Complete := True;
       Exit;

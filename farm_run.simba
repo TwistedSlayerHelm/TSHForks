@@ -1455,7 +1455,7 @@ begin
   end;
 
   HarvestTimer.Init(4000);
-  for i := 0 to (Inventory.CountEmptySlots * 8 + 8) do begin
+  while not HarvestTimer.IsFinished do begin
 
     if XPBar.EarnedXP then
       HarvestTimer.Restart;

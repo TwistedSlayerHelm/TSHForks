@@ -933,6 +933,93 @@ begin
   WriteLn('Contract: ', CurrentContract);
 end;}
 
+procedure TFarmRun.TravelToGiantSeaweed();
+var
+  T : TCountdown;
+  b : TBox;
+  MyPos : TPoint;
+  item            : TRSItem         := '';
+begin
+
+  T.init(one_minute);
+
+  repeat
+    MyPos := ScriptWalker^.GetMyPos;
+
+    if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
+      for 1 to 3 do begin
+        if not ScriptWalker^.AtTile([8832,2672], 16) then
+          ScriptWalker^.WebWalk([8832,2672]);
+
+        BargeAttendant.SelectOption(['Quick-Travel'], 10);
+
+        if WaitUntil(ScriptWalker^.GetMyPos().InBox([9113, 908, 9467, 1266]), 15, 5000) then
+          Break;
+      end;
+    end
+    else
+    if MyPos.InBox([9113, 908, 9467, 1266]) then begin
+      for 1 to 3 do begin
+        Wait(750,1000);
+        BoatyShore.WalkSelectOption(['Travel '], 10);
+
+        if WaitUntil(Chat.FindOption('Row out to sea', [CHAT_COLOR_BLACK]), 15, 5000) then begin
+          b := ([146,431,371,435]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          if WaitUntil(ScriptWalker^.GetMyPos().InBox([9303, 530, 9657, 888]), 15, 5000) then
+            Break;
+        end;
+      end;
+    end
+    else
+    if MyPos.InBox([9303, 530, 9657, 888]) then begin
+      for 1 to 3 do begin
+        Wait(750,1000);
+        BoatyIsland.WalkSelectOption(['Dive '], 10);
+        WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
+
+        if Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) then begin
+          b := ([67,399,442,403]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]), 15, 10000);
+        end;
+
+        if (ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) then
+          Break;
+
+        if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then
+          Chat.ClickContinue(True);
+
+        if Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK]) then begin
+          b := ([120,412,401,421]);
+          Mouse.Click(b, MOUSE_LEFT);
+
+          if Chat.FindOption('to Mairin', [CHAT_COLOR_BLACK])then
+            Chat.ClickContinue(True);
+
+          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
+            Break;
+        end;
+      end;
+    end
+    else
+    begin
+      item := 'Digsite pendant (5)';
+      wait(250,500);
+      if Inventory.ClickItem(item, 'Rub') and WaitUntil(Chat.FindOption('Digsite', [CHAT_COLOR_BLACK]), 10, 10000) then begin
+        b := ([241,396,279,406]);
+        Mouse.Click(b, MOUSE_LEFT);
+      end
+      else
+        Equipment.ClickItem(item, 'Digsite');
+
+      WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
+    end;
+  until ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or T.IsFinished;
+end;
+
 procedure TFarmRun.CleanGrimyHerbs();
 var
   slot            : Int32;
@@ -1465,7 +1552,6 @@ begin
       Inventory.SetSelectedSlot(-1);
       Wait(532, 718);
       Self.NoteItems;
-      Harvest;
       Exit;
     end;
 
@@ -1734,93 +1820,6 @@ begin
 
   WaitUntil((not Minimap.InPOH), 15, 10000);
   KeyBoard.KeyUp(VK_B);
-end;
-
-procedure TFarmRun.TravelToGiantSeaweed();
-var
-  T : TCountdown;
-  b : TBox;
-  MyPos : TPoint;
-  item            : TRSItem         := '';
-begin
-
-  T.init(one_minute);
-
-  repeat
-    MyPos := ScriptWalker^.GetMyPos;
-
-    if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
-      for 1 to 3 do begin
-        if not ScriptWalker^.AtTile([8832,2672], 16) then
-          ScriptWalker^.WebWalk([8832,2672]);
-
-        BargeAttendant.SelectOption(['Quick-Travel'], 10);
-
-        if WaitUntil(ScriptWalker^.GetMyPos().InBox([9113, 908, 9467, 1266]), 15, 5000) then
-          Break;
-      end;
-    end
-    else
-    if MyPos.InBox([9113, 908, 9467, 1266]) then begin
-      for 1 to 3 do begin
-        Wait(750,1000);
-        BoatyShore.WalkSelectOption(['Travel '], 10);
-
-        if WaitUntil(Chat.FindOption('Row out to sea', [CHAT_COLOR_BLACK]), 15, 5000) then begin
-          b := ([146,431,371,435]);
-          Mouse.Click(b, MOUSE_LEFT);
-
-          if WaitUntil(ScriptWalker^.GetMyPos().InBox([9303, 530, 9657, 888]), 15, 5000) then
-            Break;
-        end;
-      end;
-    end
-    else
-    if MyPos.InBox([9303, 530, 9657, 888]) then begin
-      for 1 to 3 do begin
-        Wait(750,1000);
-        BoatyIsland.WalkSelectOption(['Dive '], 10);
-        WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
-
-        if Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) then begin
-          b := ([67,399,442,403]);
-          Mouse.Click(b, MOUSE_LEFT);
-
-          WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]), 15, 10000);
-        end;
-
-        if (ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) then
-          Break;
-
-        if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then
-          Chat.ClickContinue(True);
-
-        if Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK]) then begin
-          b := ([120,412,401,421]);
-          Mouse.Click(b, MOUSE_LEFT);
-
-          if Chat.FindOption('to Mairin', [CHAT_COLOR_BLACK])then
-            Chat.ClickContinue(True);
-
-          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
-            Break;
-        end;
-      end;
-    end
-    else
-    begin
-      item := 'Digsite pendant (5)';
-      wait(250,500);
-      if Inventory.ClickItem(item, 'Rub') and WaitUntil(Chat.FindOption('Digsite', [CHAT_COLOR_BLACK]), 10, 10000) then begin
-        b := ([241,396,279,406]);
-        Mouse.Click(b, MOUSE_LEFT);
-      end
-      else
-        Equipment.ClickItem(item, 'Digsite');
-
-      WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
-    end;
-  until ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or T.IsFinished;
 end;
 
 procedure TFarmRun.TeleportTo(TravelMethod : ETravelMethod; ConfirmPos : Boolean);

@@ -943,7 +943,7 @@ begin
 
   T.init(one_minute);
 
-  while not MyPos.InBox([1129, 5407, 1769, 5824]) or not T.IsFinished do
+  while not MyPos.InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
   begin
     MyPos := ScriptWalker^.GetMyPos;
 

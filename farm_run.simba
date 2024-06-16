@@ -943,11 +943,9 @@ begin
 
   T.init(one_minute);
 
-  repeat
+  while not MyPos.InBox([1129, 5407, 1769, 5824]) or T.IsFinished do
+  begin
     MyPos := ScriptWalker^.GetMyPos;
-
-    if MyPos.InBox([1129, 5407, 1769, 5824]) then
-      Exit;
 
     if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
       for 1 to 3 do begin
@@ -1020,7 +1018,7 @@ begin
 
       WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
     end;
-  until ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or T.IsFinished;
+  end;
 end;
 
 procedure TFarmRun.CleanGrimyHerbs();

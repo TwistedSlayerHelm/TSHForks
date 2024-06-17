@@ -400,8 +400,8 @@ begin
 
   PatchData += [    {Underwater/North Seaweed}
       {patch type}        EPatchType.SEAWEED,
-      {border color}      CTS2(5137746, 3, 0.80, 0.74),
-      {soil color}        CTS2(5925985, 3, 1.00, 0.59),
+      {border color}      CTS2(4745297, 4, 1.30, 2.30),
+      {soil color}        CTS2(5926241, 4, 0.92, 0.38),
       {patch coords}      [1282, 5616],
       {leprechaun coords} [1276, 5626],
       {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
@@ -410,8 +410,8 @@ begin
 
     PatchData += [    {Underwater/South Seaweed}
       {patch type}        EPatchType.SEAWEED,
-      {border color}      CTS2(5137746, 3, 0.80, 0.74),
-      {soil color}        CTS2(5925985, 3, 1.00, 0.59),
+      {border color}      CTS2(4745297, 4, 1.30, 2.30),
+      {soil color}        CTS2(5926241, 4, 0.92, 0.38),
       {patch coords}      [1282, 5640],
       {leprechaun coords} [1276, 5626],
       {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
@@ -500,8 +500,8 @@ end;
 
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);
 var
-  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'weed patch'];
-  harvestUpText : TStringArray := ['Pick', 'Pick', 'Pick', 'Harvest', 'Pick', 'Pick'];
+  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'Seaweed patch'];
+  harvestUpText : TStringArray := ['ick', 'ick', 'ick', 'arves', 'ick', 'ick'];
   data : TPatchData := PatchData[patch];
   tpa  : TPointArray := [];
   searchBox : TBox := [0, 0, 0, 0];
@@ -511,7 +511,6 @@ var
 begin
   if data.PatchType = EPatchType.HERB then
     planted := 'Herb';
-
   Self.Patches += [data, tpa, searchBox, travel, seed,
                    empty, planted, harvest];
 end;
@@ -941,10 +940,9 @@ var
   MyPos : TPoint;
   item            : TRSItem         := '';
 begin
-
   T.init(one_minute);
 
-  while not (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
+  while not (MyPos := ScriptWalker^.GetMyPos).InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
   begin
     MyPos := ScriptWalker^.GetMyPos;
 
@@ -1000,10 +998,10 @@ begin
 
           if Chat.FindOption('airin', [CHAT_COLOR_BLACK])then
             Chat.ClickContinue(True);
-        end;
 
-        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 10000) then
-          Break;
+          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
+            Break;
+        end;
       end;
     end
     else
@@ -1322,7 +1320,8 @@ begin
     if not Self.CurrentPatch.Find then
       Continue;
 
-    if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) or (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then begin
+    if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText)
+      or (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then begin
       if SRL.Dice(65) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
       else
@@ -1406,7 +1405,7 @@ begin
         Mouse.Move(Self.CurrentPatch.SearchBox);
     end;
 
-    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB) or (Self.CurrentPatch.Data.PatchType <> EPatchType.SEAWEED)
+    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB) and (Self.CurrentPatch.Data.PatchType <> EPatchType.SEAWEED)
      and (Self.CurrentPatch.PlantedUpText in MainScreen.GetUpText.After('>')) then begin
       if MainScreen.IsUpText(Self.CurrentPatch.HarvestUpText) then
         Self.Harvest
@@ -1446,11 +1445,11 @@ begin
   end;
 
   if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
-    if SRL.Dice(65) and (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
+    if (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
       if Inventory.FindItem(compostItem, slot) then
         Inventory.SetSelectedSlot(slot);
       Wait(78, 208);
-      if SRL.Dice(65) then
+      if SRL.Dice(95) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
       else
         Mouse.Move(Self.CurrentPatch.SearchBox);
@@ -1477,6 +1476,7 @@ begin
     Wait(T.TimeRemaining);
     Exit;
   end;
+
 
   repeat
     if (Length(MainScreen.FindHitsplats(MainScreen.GetPlayerBox)) > 1) then begin

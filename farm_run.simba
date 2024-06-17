@@ -500,8 +500,8 @@ end;
 
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);
 var
-  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'Seaweed patch'];
-  harvestUpText : TStringArray := ['ick', 'ick', 'ick', 'arves', 'ick', 'ick'];
+  emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'weed patch'];
+  harvestUpText : TStringArray := ['Pick', 'Pick', 'Pick', 'Harvest', 'Pick', 'Pick'];
   data : TPatchData := PatchData[patch];
   tpa  : TPointArray := [];
   searchBox : TBox := [0, 0, 0, 0];
@@ -511,6 +511,7 @@ var
 begin
   if data.PatchType = EPatchType.HERB then
     planted := 'Herb';
+
   Self.Patches += [data, tpa, searchBox, travel, seed,
                    empty, planted, harvest];
 end;
@@ -997,7 +998,7 @@ begin
           b := ([120,412,401,421]);
           Mouse.Click(b, MOUSE_LEFT);
 
-          if Chat.FindOption('to Mairin', [CHAT_COLOR_BLACK])then
+          if Chat.FindOption('airin', [CHAT_COLOR_BLACK])then
             Chat.ClickContinue(True);
         end;
 
@@ -1321,7 +1322,7 @@ begin
     if not Self.CurrentPatch.Find then
       Continue;
 
-    if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
+    if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) or (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then begin
       if SRL.Dice(65) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
       else
@@ -1405,7 +1406,7 @@ begin
         Mouse.Move(Self.CurrentPatch.SearchBox);
     end;
 
-    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB)
+    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB) or (Self.CurrentPatch.Data.PatchType <> EPatchType.SEAWEED)
      and (Self.CurrentPatch.PlantedUpText in MainScreen.GetUpText.After('>')) then begin
       if MainScreen.IsUpText(Self.CurrentPatch.HarvestUpText) then
         Self.Harvest
@@ -1445,7 +1446,7 @@ begin
   end;
 
   if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
-    If SRL.Dice(65) and (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
+    if SRL.Dice(65) and (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
       if Inventory.FindItem(compostItem, slot) then
         Inventory.SetSelectedSlot(slot);
       Wait(78, 208);
@@ -1477,7 +1478,6 @@ begin
     Exit;
   end;
 
-
   repeat
     if (Length(MainScreen.FindHitsplats(MainScreen.GetPlayerBox)) > 1) then begin
       WriteLn('Combat detected in Port Phasmatys. Running away.');
@@ -1508,7 +1508,7 @@ begin
   if not Self.CurrentPatch.Find then
     Exit;
 
-  if not Mainscreen.IsUpText(Self.CurrentPatch.HarvestUpText) then begin
+  if not Mainscreen.IsUpText(Self.CurrentPatch.HarvestUpText) or (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then begin
     if SRL.Dice(65) then
       Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
     else
@@ -1553,8 +1553,6 @@ begin
       Inventory.SetSelectedSlot(-1);
       Wait(532, 718);
       Self.NoteItems;
-      if (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then
-        Self.TravelToGiantSeaweed;
       Exit;
     end;
 

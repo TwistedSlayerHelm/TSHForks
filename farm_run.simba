@@ -2047,7 +2047,6 @@ begin
     ETravelMethod.DIGSITE_TO_SEAWEED:
       begin
           Self.TravelToGiantSeaweed();
-          Exit;
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin
@@ -2108,7 +2107,7 @@ begin
   if not WaitUntil((ScriptWalker^.GetMyPos in Self.CurrentPatch.Data.MapCoords), 10, 10000) then
     Exit;
 
-  if (SRL.Dice(75) and (Inventory.CountEmptySlots <= 6)) or Inventory.IsFull then
+  if Inventory.IsFull then
     Self.NoteItems;
 end;
 

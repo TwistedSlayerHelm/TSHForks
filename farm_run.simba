@@ -1001,13 +1001,9 @@ begin
             Chat.ClickContinue(True);
 
           if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
-            Break;
+            Exit;
         end;
       end;
-    end
-    else
-    if MyPos.InBox([1129, 5407, 1769, 5824]) then begin
-      Exit;
     end
     else
     begin

@@ -1543,7 +1543,7 @@ begin
       Mouse.Move(Self.CurrentPatch.SearchBox);
   end;
 
-  HarvestTimer.Init(4000);
+  HarvestTimer.Init(8000);
   while not HarvestTimer.IsFinished do begin
 
     if XPBar.EarnedXP then
@@ -1640,7 +1640,7 @@ begin
   else
     Mouse.Move(Self.CurrentPatch.SearchBox);
 
-  HarvestTimer.Init(4000);
+  HarvestTimer.Init(8000);
   while not HarvestTimer.IsFinished do begin
 
     if XPBar.EarnedXP then
@@ -1731,7 +1731,7 @@ begin
   else
     Mouse.Move(SRL.RandomPoint(Self.CurrentPatch.TPA.Mean, Mainscreen.NormalizeDistance(15)));
 
-  HarvestTimer.Init(4000);
+  HarvestTimer.Init(8000);
   while not HarvestTimer.IsFinished do begin
 
     if XPBar.EarnedXP then

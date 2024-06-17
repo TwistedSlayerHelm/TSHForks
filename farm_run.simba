@@ -943,7 +943,7 @@ begin
 
   T.init(one_minute);
 
-  while not MyPos.InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
+  while not (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
   begin
     MyPos := ScriptWalker^.GetMyPos;
 
@@ -999,10 +999,10 @@ begin
 
           if Chat.FindOption('to Mairin', [CHAT_COLOR_BLACK])then
             Chat.ClickContinue(True);
-
-          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
-            Exit;
         end;
+
+        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 10000) then
+          Break;
       end;
     end
     else
@@ -2047,6 +2047,7 @@ begin
     ETravelMethod.DIGSITE_TO_SEAWEED:
       begin
           Self.TravelToGiantSeaweed();
+          Exit;
       end;
     ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD:
       begin

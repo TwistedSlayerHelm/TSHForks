@@ -728,10 +728,12 @@ begin
   if Inventory.IsFull then
     Exit(EPatchState.NOTE_ITEMS);
 
-  if SRL.Dice(65) then
-    Mouse.HumanMove(SRL.RandomPoint(Self.TPA.Mean, Mainscreen.NormalizeDistance(15)))
-  else
-    Mouse.Move(SRL.RandomPoint(Self.TPA.Mean, Mainscreen.NormalizeDistance(15)));
+  if SRL.Dice(65) then begin
+    Mouse.HumanMove(SRL.RandomPoint(Self.SearchBox));
+  end
+  else begin
+    Mouse.Move(Self.SearchBox);
+  end;
 
   if Mainscreen.IsUpText(Self.HarvestUpText) then
     Exit(EPatchState.HARVEST);
@@ -745,11 +747,11 @@ begin
   end;
 
   Mouse.Click(MOUSE_RIGHT);
-  if ChooseOption.HasOption('Dead') then
+  if ChooseOption.HasOption('Dead', True, False) then
     Exit(EPatchState.DEAD);
-  if ChooseOption.HasOption(Self.HarvestUpText) then
+  if ChooseOption.HasOption(Self.HarvestUpText, True, False) then
     Exit(EPatchState.HARVEST);
-  if ChooseOption.HasOption('Cure') then
+  if ChooseOption.HasOption('Cure', True, False) then
     Exit(EPatchState.DISEASED);
   if ChooseOption.Select('Inspect') then
       goto inspect
@@ -959,7 +961,7 @@ begin
 
     if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
       for 1 to 3 do begin
-        if not ScriptWalker^.AtTile([8832,2672], 16) then
+        if not ScriptWalker^.AtTile([8840,2672], 16) then
           ScriptWalker^.WebWalk([8832,2672]);
 
         BargeAttendant.SelectOption(['Quick-Travel'], 10);
@@ -1027,6 +1029,9 @@ begin
         Equipment.ClickItem(item, 'Digsite');
 
       WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
+      writeln(Scriptwalker^.GetMyPos());
+      writeln(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]));
+
     end;
   end;
 end;
@@ -1624,7 +1629,7 @@ begin
   if Mainscreen.IsUpText('Pick') then begin
     Mouse.Click(MOUSE_LEFT);
   end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
-    if ChooseOption.HasOption('Clear') then begin
+    if ChooseOption.HasOption('Clear', True, False) then begin
       Self.CurrentPatch.Complete := True
     end else begin
       WriteLn('Failed to find harvest uptext or choose option.');
@@ -1715,7 +1720,7 @@ begin
     Self.CurrentPatch.Complete := True;
     Exit;
   end else if not ChooseOption.Select('Pick', MOUSE_LEFT, True, False) then begin
-    if ChooseOption.HasOption('Clear') then begin
+    if ChooseOption.HasOption('Clear', True, False) then begin
       Self.CurrentPatch.Complete := True
     end else begin
       WriteLn('Failed to find harvest uptext or choose option.');

@@ -266,7 +266,7 @@ begin
       {leprechaun coords} [6080, 2923],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Ardy herb',
-      {map coords}        [5900, 2800, 6250, 3100]];
+      {map coords}        [5855, 2792, 6286, 3070]];
 
   PatchData += [    {Ardy/limp}
       {patch type}        EPatchType.FLOWER,
@@ -276,7 +276,7 @@ begin
       {leprechaun coords} [6080, 2923],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Ardy flower',
-      {map coords}        [5900, 2800, 6250, 3100]];
+      {map coords}        [5855, 2792, 6286, 3070]];
 
   PatchData += [    {Hosidious/herb}
       {patch type}        EPatchType.HERB,
@@ -496,6 +496,17 @@ begin
       end;
 
   if not ResultType = 2 then Result := true;
+end;
+
+function TRSInventory.Count(): Int32; override;
+var
+  Slot: int32;
+begin
+  if not Self.Open() then
+    Exit;
+  for slot := 0 to 27 do
+   if self.isslotused(slot) then
+    Inc(result)
 end;
 
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);

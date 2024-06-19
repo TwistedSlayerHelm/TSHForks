@@ -29,34 +29,35 @@ type
   );
 
   ETravelMethod = (
-   ICY_BASALT,            {Weiss}
-   STONY_BASALT,          {Troll Stronghold}
-   CATHERBY_TABLET,       {Catherby}
-   CATHERBY_TELEPORT,     {Catherby}
-   CAMELOT_TELEPORT,      {Catherby}
-   CAMELOT_TABLET,        {Catherby}
-   ARDY_CLOAK_2,          {Ardy}
-   ARDY_CLOAK_3,          {Ardy}
-   ARDY_CLOAK_4,          {Ardy}
-   ARDY_CLOAK_1_BUSH,     {Monastery}
-   ARDY_CLOAK_2_BUSH,     {Monastery}
-   ARDY_CLOAK_3_BUSH,     {Monastery}
-   ARDY_CLOAK_4_BUSH,     {Monastery}
-   XERICS_TALISMAN,       {Hosidious}
-   HOSIDIOUS_TABLET,      {Hosidious}
-   HOUSE_TELEPORT,        {Hosidious}
-   CON_CAPE_HOSIDIUS,      {Hosidious}
-   EXPLORERS_RING_2,      {Fally}
-   EXPLORERS_RING_3,      {Fally}
-   EXPLORERS_RING_4,      {Fally}
-   FENKENSTRAIN_TELEPORT, {Phasmatys}
-   ECTOPHIAL,             {Phasmatys}
-   FARMING_CAPE,          {Guild}
-   SKILLS_NECKLACE,       {Guild}
-   NONE,                  {Guild}
-   DIGSITE_TO_SEAWEED,    {Underwater}
-   HOUSE_TAB_SPIRIT_TREE_GUILD,
-   HOUSE_TELE_SPIRIT_TREE_GUILD
+   ICY_BASALT,                  {Weiss}
+   STONY_BASALT,                {Troll Stronghold}
+   CATHERBY_TABLET,             {Catherby}
+   CATHERBY_TELEPORT,           {Catherby}
+   CAMELOT_TELEPORT,            {Catherby}
+   CAMELOT_TABLET,              {Catherby}
+   ARDY_CLOAK_2,                {Ardy}
+   ARDY_CLOAK_3,                {Ardy}
+   ARDY_CLOAK_4,                {Ardy}
+   ARDY_CLOAK_1_BUSH,           {Monastery}
+   ARDY_CLOAK_2_BUSH,           {Monastery}
+   ARDY_CLOAK_3_BUSH,           {Monastery}
+   ARDY_CLOAK_4_BUSH,           {Monastery}
+   XERICS_TALISMAN,             {Hosidious}
+   HOSIDIOUS_TABLET,            {Hosidious}
+   HOUSE_TELEPORT,              {Hosidious}
+   CON_CAPE_HOSIDIUS,           {Hosidious}
+   EXPLORERS_RING_2,            {Fally}
+   EXPLORERS_RING_3,            {Fally}
+   EXPLORERS_RING_4,            {Fally}
+   FENKENSTRAIN_TELEPORT,       {Phasmatys}
+   ECTOPHIAL,                   {Phasmatys}
+   FARMING_CAPE,                {Guild}
+   SKILLS_NECKLACE,             {Guild}
+   NONE,                        {Guild}
+   DIGSITE_TO_SEAWEED,          {Underwater}
+   CON_CAPE_SPIRIT_TREE_GUILD,  {POH}
+   HOUSE_TAB_SPIRIT_TREE_GUILD, {POH}
+   HOUSE_TELE_SPIRIT_TREE_GUILD {POH}
   );
 
   ECompostMethod = (
@@ -1859,7 +1860,8 @@ begin
 
     case TravelMethod of
       ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD,
-      ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD:
+      ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD,
+      ETravelMethod.CON_CAPE_SPIRIT_TREE_GUILD:
         begin
           Self.UsePOHSpiritTree('guild');
           goto teleport_complete;
@@ -2075,6 +2077,13 @@ begin
         wait(250,500);
         Magic.CastSpell(spell);
       end;
+     ETravelMethod.CON_CAPE_SPIRIT_TREE_GUILD:
+      begin
+        items := (['Construct. cape', 'Construct. cape(t)']);
+        wait(250,500);
+        if not Inventory.ClickItem(item, 'Tele to POH') then
+        Equipment.ClickItem(item, 'Tele to POH');
+      end;
   end;
 
   Wait(548, 732); Wait(118, 278);
@@ -2112,7 +2121,8 @@ begin
   end;
 
   if (TravelMethod = ETravelMethod.HOUSE_TAB_SPIRIT_TREE_GUILD)
-    or (TravelMethod = ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD) then
+    or (TravelMethod = ETravelMethod.HOUSE_TELE_SPIRIT_TREE_GUILD)
+    or  (TravelMethod = ETravelMethod.CON_CAPE_SPIRIT_TREE_GUILD) then
       Self.UsePOHSpiritTree('guild');
 
   teleport_complete:

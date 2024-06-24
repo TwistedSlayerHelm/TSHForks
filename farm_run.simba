@@ -1030,9 +1030,6 @@ begin
         Equipment.ClickItem(item, 'Digsite');
 
       WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
-      writeln(Scriptwalker^.GetMyPos());
-      writeln(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]));
-
     end;
   end;
 end;

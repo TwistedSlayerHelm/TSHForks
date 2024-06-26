@@ -1342,7 +1342,7 @@ begin
         Mouse.Move(Self.CurrentPatch.SearchBox);
     end;
 
-    if MainScreen.IsUpText(Self.CurrentPatch.PlantedUpText) or (Self.CurrentPatch.PlantedUpText in MainScreen.GetUpText.After('>')) then begin
+    if MainScreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
       Mouse.Click(MOUSE_LEFT);
       Break;
     end else if ChooseOption.Select(Self.CurrentPatch.PlantedUpText) then begin

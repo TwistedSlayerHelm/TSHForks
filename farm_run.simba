@@ -1335,6 +1335,7 @@ begin
     if not Self.CurrentPatch.Find then
       Continue;
 
+    XPbar.EarnedXP;
     if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
       if SRL.Dice(65) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
@@ -1356,7 +1357,7 @@ begin
     Exit;
   end;
 
-  if not WaitUntil((Chat.FindMessage('trea') or Chat.FindMessage('ming 2')), 50, 10000) then begin
+  if not WaitUntil(XPbar.EarnedXP, 50, 5000) then begin
     WriteLn('WaitUntil failed in composting step.');
     Exit;
   end;
@@ -1420,7 +1421,7 @@ begin
         Mouse.Move(Self.CurrentPatch.SearchBox);
     end;
 
-    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB) or (Self.CurrentPatch.Data.PatchType <> EPatchType.SEAWEED)
+    if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB)
      and (Self.CurrentPatch.PlantedUpText in MainScreen.GetUpText.After('>')) then begin
       if MainScreen.IsUpText(Self.CurrentPatch.HarvestUpText) then
         Self.Harvest
@@ -1472,7 +1473,7 @@ begin
   end;
 
   XPBar.EarnedXP;
-  if WaitUntil(((not Self.CurrentPatch.IsEmpty) or XPBar.EarnedXP), 15, 10000) then begin
+  if WaitUntil(XPBar.EarnedXP, 15, 10000) then begin
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
       Self.CompostPatch

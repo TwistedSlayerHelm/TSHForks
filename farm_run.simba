@@ -1335,7 +1335,6 @@ begin
     if not Self.CurrentPatch.Find then
       Continue;
 
-    XPbar.EarnedXP;
     if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
       if SRL.Dice(65) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
@@ -1357,7 +1356,7 @@ begin
     Exit;
   end;
 
-  if not WaitUntil(XPbar.EarnedXP, 50, 5000) then begin
+  if not WaitUntil((Chat.FindMessage('trea') or Chat.FindMessage('ming 2')), 50, 10000) then begin
     WriteLn('WaitUntil failed in composting step.');
     Exit;
   end;

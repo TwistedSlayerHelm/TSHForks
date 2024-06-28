@@ -1472,7 +1472,7 @@ begin
   end;
 
   XPBar.EarnedXP;
-  if WaitUntil(XPBar.EarnedXP, 15, 10000) then begin
+  if WaitUntil(((not Self.CurrentPatch.IsEmpty) or XPBar.EarnedXP), 15, 10000) then begin
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
       Self.CompostPatch

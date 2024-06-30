@@ -122,13 +122,14 @@ type
 
   TFarmRun = record
     Patches                         : array of TFarmPatch;
+    LeprechaunItems                 : TRSItemArray;
     CurrentPatch                    : TFarmPatch;
     InactivityTimer                 : TCountdown;
     PatchesCompleted                : Int32;
     PatchesSkipped                  : Int32;
     ResurrectCrop                   : Boolean;
     CompostMethod                   : ECompostMethod;
-
+    CleanHerbs                      : Boolean;
     MaxRuns                         : Int32;
     RunsComplete                    : Int32;
     Runtime                         : TStopWatch;
@@ -150,23 +151,6 @@ const
     'Grimy kwuarm', 'Grimy snapdragon',
     'Grimy cadantine', 'Grimy lantadyme',
     'Grimy dwarf weed', 'Grimy torstol'
-    ];
-
-  LEPRECHAUN_ITEMS  : TRSItemArray := [
-    'Guam leaf', 'Marrentill',
-    'Tarromin', 'Harralander',
-    'Ranarr weed', 'Toadflax',
-    'Irit leaf', 'Avantoe',
-    'Kwuarm', 'Snapdragon',
-    'Cadantine', 'Lantadyme',
-    'Dwarf weed', 'Torstol',
-    'Limpwurt root', 'Potato',
-    'Onion', 'Cabbage',
-    'Tomato', 'Sweetcorn',
-    'Strawberry', 'Watermelon',
-    'Snape grass',
-    'White berries', 'Potato cactus',
-    'Cactus spine', 'Giant seaweed'
     ];
 
   CONTRACT_TEXT     : TStringArray = [
@@ -953,6 +937,7 @@ var
   T : TCountdown;
   b : TBox;
   MyPos : TPoint;
+  attempts: int32;
   item            : TRSItem         := '';
 begin
   T.init(one_minute);
@@ -962,7 +947,7 @@ begin
     MyPos := ScriptWalker^.GetMyPos;
 
     if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
-      for 1 to 3 do begin
+      for attempts := 1 to 3 do begin
         if not ScriptWalker^.AtTile([8840,2672], 16) then
           ScriptWalker^.WebWalk([8832,2672]);
 
@@ -974,7 +959,7 @@ begin
     end
     else
     if MyPos.InBox([9113, 908, 9467, 1266]) then begin
-      for 1 to 3 do begin
+      for attempts := 1 to 3 do begin
         Wait(750,1000);
         BoatyShore.WalkSelectOption(['Travel '], 10);
 
@@ -989,7 +974,7 @@ begin
     end
     else
     if MyPos.InBox([9303, 530, 9657, 888]) then begin
-      for 1 to 3 do begin
+      for attempts := 1 to 3 do begin
         Wait(750,1000);
         BoatyIsland.WalkSelectOption(['Dive '], 10);
         WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
@@ -1063,12 +1048,13 @@ begin
   if not RSClient.IsLoggedIn then
     Exit;
 
-  Self.CleanGrimyHerbs;
+  if Self.CleanHerbs then
+    Self.CleanGrimyHerbs;
 
   WriteLn('Noting items at ', Self.CurrentPatch.Data.Name);
 
-  for I := 0 to High(LEPRECHAUN_ITEMS) do begin
-    if Inventory.FindItem(item := LEPRECHAUN_ITEMS[i], slot) then begin
+  for I := 0 to High(LeprechaunItems) do begin
+    if Inventory.FindItem(item := LeprechaunItems[i], slot) then begin
       slots += slot;
       items += item;
       lepItems += i;
@@ -1364,10 +1350,11 @@ begin
   Wait(298, 378);
   Self.DropBuckets;
 
-  if SRL.Dice(40) then begin
+  if SRL.Dice(40) and Self.CleanHerbs then begin
     Self.CleanGrimyHerbs;
-    if SRL.Dice(80) then
-      Self.NoteItems;
+
+  if SRL.Dice(80) then
+    Self.NoteItems;
   end;
 
   Wait(208, 313);
@@ -1767,6 +1754,7 @@ var
   Primary, Secondary,
   TPA                 : TPointArray;
   ATPA                : T2DPointArray;
+  attempts : int32;
 begin
 
   if not WaitUntil(Minimap.InPOH, 15, 15000) then begin
@@ -1774,7 +1762,7 @@ begin
     Exit;
   end;
 
-  for 1 to 3 do begin
+  for attempts := 1 to 3 do begin
     if (SRL.FindColors(Primary, CTS2(1649718, 5, 0.15, 1.14), MainScreen.Bounds) = 0)
      or (SRL.FindColors(Secondary, CTS2(1720892, 10, 0.21, 1.42), MainScreen.Bounds) = 0) then begin
       if SRL.Dice(50) then
@@ -2143,9 +2131,9 @@ begin
   strings := ['Runs complete'];
   variants := [Self.RunsComplete];
 
-  for i:= 0 to High(LEPRECHAUN_ITEMS) do begin
+  for i:= 0 to High(LeprechaunItems) do begin
     if Self.HarvestQuantities[i] > 0 then begin
-      strings += LEPRECHAUN_ITEMS[i];
+      strings += LeprechaunItems[i];
       variants += Self.HarvestQuantities[i];
     end;
   end;
@@ -2176,6 +2164,43 @@ begin
       tmp += Self.Patches[i].Data.MapCoords;
   end;
 
+  if Self.CleanHerbs then begin
+    LeprechaunItems := [
+      'Grimy guam leaf', 'Grimy marrentill',
+      'Grimy tarromin', 'Grimy harralander',
+      'Grimy ranarr weed', 'Grimy toadflax',
+      'Grimy irit leaf', 'Grimy avantoe',
+      'Grimy kwuarm', 'Grimy snapdragon',
+      'Grimy cadantine', 'Grimy lantadyme',
+      'Grimy dwarf weed', 'Grimy torstol',
+      'Limpwurt root', 'Potato',
+      'Onion', 'Cabbage',
+      'Tomato', 'Sweetcorn',
+      'Strawberry', 'Watermelon',
+      'Snape grass',
+      'White berries', 'Potato cactus',
+      'Cactus spine', 'Giant seaweed'
+     ];
+   end
+   else
+     LeprechaunItems := [
+    'Guam leaf', 'Marrentill',
+    'Tarromin', 'Harralander',
+    'Ranarr weed', 'Toadflax',
+    'Irit leaf', 'Avantoe',
+    'Kwuarm', 'Snapdragon',
+    'Cadantine', 'Lantadyme',
+    'Dwarf weed', 'Torstol',
+    'Limpwurt root', 'Potato',
+    'Onion', 'Cabbage',
+    'Tomato', 'Sweetcorn',
+    'Strawberry', 'Watermelon',
+    'Snape grass',
+    'White berries', 'Potato cactus',
+    'Cactus spine', 'Giant seaweed'
+    ];
+
+
   if ScriptWalker = nil then
   begin
     rsw.SetupRegions(tmp);
@@ -2200,7 +2225,7 @@ begin
   Self.InactivityTimer.Init(6*ONE_MINUTE);
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
 
-  SetLength(Self.HarvestQuantities, Length(LEPRECHAUN_ITEMS));
+  SetLength(Self.HarvestQuantities, Length(LeprechaunItems));
 end;
 
 procedure TFarmRun.Run();

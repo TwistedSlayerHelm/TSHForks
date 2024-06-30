@@ -2327,7 +2327,7 @@ procedure TFarmRun.DoFarmRun(); begin
   ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
 
   if Length(Self.Patches) = 2 then begin
-    if (Self.Patches[0].Data.Name = 'Seaweed patch') and (Self.Patches[0].Data.Name = 'Seaweed patch') then
+    if ('seaweed' in Self.Patches[0].Data.Name) and ('seaweed' in Self.Patches[1].Data.Name) then
       ReadyTimer.Init(Random(46*ONE_MINUTE, 55*ONE_MINUTE));
   end;
 end;

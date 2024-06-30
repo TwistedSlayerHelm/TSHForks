@@ -483,6 +483,14 @@ begin
   if not ResultType = 2 then Result := true;
 end;
 
+procedure TRSItemArray.Add(Items : TRSItemArray);
+var
+  Item : TRSItem;
+begin
+  for Item in Items do
+    Self += Item;
+end;
+
 function TRSInventory.Count(): Int32; override;
 var
   Slot: int32;
@@ -2164,26 +2172,7 @@ begin
       tmp += Self.Patches[i].Data.MapCoords;
   end;
 
-  if Self.CleanHerbs then begin
-    LeprechaunItems := [
-      'Grimy guam leaf', 'Grimy marrentill',
-      'Grimy tarromin', 'Grimy harralander',
-      'Grimy ranarr weed', 'Grimy toadflax',
-      'Grimy irit leaf', 'Grimy avantoe',
-      'Grimy kwuarm', 'Grimy snapdragon',
-      'Grimy cadantine', 'Grimy lantadyme',
-      'Grimy dwarf weed', 'Grimy torstol',
-      'Limpwurt root', 'Potato',
-      'Onion', 'Cabbage',
-      'Tomato', 'Sweetcorn',
-      'Strawberry', 'Watermelon',
-      'Snape grass',
-      'White berries', 'Potato cactus',
-      'Cactus spine', 'Giant seaweed'
-     ];
-   end
-   else
-     LeprechaunItems := [
+  LeprechaunItems := [
     'Guam leaf', 'Marrentill',
     'Tarromin', 'Harralander',
     'Ranarr weed', 'Toadflax',
@@ -2200,6 +2189,9 @@ begin
     'Cactus spine', 'Giant seaweed'
     ];
 
+  if not Self.CleanHerbs then begin
+    LeprechaunItems.Add(GRIMY_HERBS);
+  end;
 
   if ScriptWalker = nil then
   begin

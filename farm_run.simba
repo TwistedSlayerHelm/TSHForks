@@ -1354,16 +1354,15 @@ begin
     WriteLn('WaitUntil failed in composting step.');
     Exit;
   end;
-
-  Wait(298, 378);
-  Self.DropBuckets;
-
   if SRL.Dice(40) and Self.CleanHerbs then begin
     Self.CleanGrimyHerbs;
 
   if SRL.Dice(80) then
     Self.NoteItems;
   end;
+
+  Wait(298, 378);
+  Self.DropBuckets;
 
   Wait(208, 313);
   Self.CurrentPatch.Complete := True;

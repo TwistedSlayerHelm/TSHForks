@@ -597,7 +597,7 @@ var
   colorCount      : Int32;
 begin
   colorCount := SRL.CountColor(CTS2(6050153, 7, 2.73, 0.61), Self.SearchBox);
-  Result := colorCount > MainScreen.NormalizeDistance(40);
+  Result := colorCount > MainScreen.NormalizeDistance(24);
 
   //DEBUG
   if colorCount > 0 then
@@ -1041,6 +1041,13 @@ begin
     Mouse.Move(Inventory.GetSlotBox(slot));
     Mouse.Click(MOUSE_LEFT); //TODO Faster click w/ drag
     Wait(32, 56);
+
+    if ('You need level' in Chat.GetMessage(7)) then begin
+      Self.CleanHerbs := False;
+      Self.LeprechaunItems.Add(GRIMY_HERBS);
+      SetLength(Self.HarvestQuantities, Length(Self.LeprechaunItems));
+      Exit;
+    end;
   end;
 end;
 
@@ -1379,6 +1386,11 @@ begin
 
   if not Self.CurrentPatch.Find then
     Exit;
+
+  if (Self.CurrentPatch.Data.PatchType = EPatchType.ALLOTMENT) and (Inventory.CountItemStack(Self.CurrentPatch.Seed) < 3) then begin
+    Self.CurrentPatch.Skip := True;
+    Exit;
+  end;
 
   WriteLn('Planting ' + toStr(Self.CurrentPatch.Seed) + ' at ' + Self.CurrentPatch.Data.Name + ' patch.');
 

@@ -388,7 +388,7 @@ begin
       {border color}      CTS2(4745297, 4, 1.30, 2.30),
       {soil color}        CTS2(5926241, 4, 0.92, 0.38),
       {patch coords}      [1282, 5616],
-      {leprechaun coords} [1276, 5626],
+      {leprechaun coords} [1276, 5630],
       {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
       {name}              'Giant seaweed north',
       {map coords}        [1129, 5407, 1769, 5824]];
@@ -398,7 +398,7 @@ begin
       {border color}      CTS2(4745297, 4, 1.30, 2.30),
       {soil color}        CTS2(5926241, 4, 0.92, 0.38),
       {patch coords}      [1282, 5640],
-      {leprechaun coords} [1276, 5626],
+      {leprechaun coords} [1276, 5630],
       {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
       {name}              'Giant seaweed south',
       {map coords}        [1129, 5407, 1769, 5824]];

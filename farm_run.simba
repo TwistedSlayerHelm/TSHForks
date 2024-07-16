@@ -187,8 +187,8 @@ begin
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(6520971, 8, 0.05, 0.27),
       {soil color}        CTS2(408653, 7, 0.11, 2.64),
-      {patch coords}      [6786, 710],
-      {leprechaun coords} [6784, 728],
+      {patch coords}      [6787, 710],
+      {leprechaun coords} [6785, 728],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Weiss herb',
       {map coords}        [6500,  600, 7000,  800]];
@@ -1368,7 +1368,7 @@ begin
     Self.NoteItems;
   end;
 
-  Wait(298, 378);
+  Wait(600, 750);
   Self.DropBuckets;
 
   Wait(208, 313);

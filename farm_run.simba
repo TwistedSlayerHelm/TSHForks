@@ -1392,10 +1392,10 @@ begin
     Exit;
   end;
 
- if (Self.CurrentPatch.Data.PatchType <> EPatchType.ALLOTMENT) and (Inventory.CountItemStack(Self.CurrentPatch.Seed) < 1) then begin
+ {if (Self.CurrentPatch.Data.PatchType <> EPatchType.ALLOTMENT) and (Inventory.CountItemStack(Self.CurrentPatch.Seed) < 1) then begin
     Self.CurrentPatch.Skip := True;
     Exit;
-  end;
+  end;}
 
   WriteLn('Planting ' + toStr(Self.CurrentPatch.Seed) + ' at ' + Self.CurrentPatch.Data.Name + ' patch.');
 

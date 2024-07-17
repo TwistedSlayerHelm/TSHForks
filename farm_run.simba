@@ -539,7 +539,7 @@ var
     if SRL.FindColors(borderTPA, Self.Data.BorderColor, MainScreen.Bounds) = 0 then
       Exit(False);
 
-    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(36));
+    borderATPA := borderTPA.Cluster(Mainscreen.NormalizeDistance(32));
     for i := 0 to High(borderATPA) do begin
       Self.TPA := borderATPA[i].ConvexHull.Connect;
       if SRL.PointInPoly(filterPt, Self.TPA) then begin

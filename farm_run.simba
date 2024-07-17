@@ -1392,16 +1392,12 @@ begin
     Exit;
   end;
 
- {if (Self.CurrentPatch.Data.PatchType <> EPatchType.ALLOTMENT) and (Inventory.CountItemStack(Self.CurrentPatch.Seed) < 1) then begin
-    Self.CurrentPatch.Skip := True;
-    Exit;
-  end;}
-
   WriteLn('Planting ' + toStr(Self.CurrentPatch.Seed) + ' at ' + Self.CurrentPatch.Data.Name + ' patch.');
 
   if Inventory.GetSelectedSlot = -1 then begin
     if not Inventory.FindItem(Self.CurrentPatch.Seed, slot) then begin
       WriteLn('Couldn''t find seed in inventory.');
+      Self.CurrentPatch.Skip := True;
       Exit;
     end;
 

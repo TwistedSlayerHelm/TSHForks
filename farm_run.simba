@@ -2239,6 +2239,12 @@ begin
   if not RSClient.IsLoggedIn then
     Login.LoginPlayer;
 
+  if ChatButtons.GetState(ERSChatButton.GAME_CHAT) <> ERSChatButtonState.ENABLED then
+    ChatButtons.ChangeState(ERSChatButton.GAME_CHAT, ERSChatButtonState.ENABLED); 
+
+  if not ChatButtons.IsActive(ERSChatButton.GAME_CHAT) then
+    ChatButtons.Open(ERSChatButton.GAME_CHAT); 
+
   Antiban.DebugLn('Starting farm run.');
   Self.Runtime.Start;
 

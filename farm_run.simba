@@ -493,7 +493,7 @@ function TRSMainScreen.IsUpText(Text: TStringArray; Timeout: Int32 = -1): Boolea
     UpText := Self.GetUpText();
 
     for I := 0 to High(Text) do
-      if (Text[I] in UpText) or (StringMatch(Text, UpText) > 0.9) then
+      if (Text[I] in UpText) or (StringMatch(Text[I], UpText) > 0.9) then
         Exit(True);
   end;
 

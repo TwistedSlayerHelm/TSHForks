@@ -1313,6 +1313,7 @@ var
   compostArray    : TStringArray := ['Compost', 'Supercompost', 'Ultracompost', 'Bottomless compost bucket', ''];
   compostItem     : TRSItem := compostArray[Self.CompostMethod];
   slot, attempts  : Int32;
+  T : TCountdown;
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1324,77 +1325,95 @@ begin
 
   WriteLn('Composting at ' + Self.CurrentPatch.Data.Name + ' patch.');
 
-  if (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) and (Inventory.GetSelectedSlot = -1) then begin
-    if (not Inventory.FindItem(compostItem, slot)) and (Self.CompostMethod <> ECompostMethod.BOTTOMLESS) then begin
+  if not Inventory.SetSelectedSlot(-1) then begin
+    Writeln('Failed to unselect item before searching for compost');
+    Exit;
+  end;
+
+  if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then begin
+    if not WaitUntil((Magic.GetSpellBook = ERSSpellBook.LUNAR), 1200, 2*ONE_MINUTE) then
+      TerminateScript('Couldn''t compost because you''re on the wrong spellbook for fertile soil.');
+    Magic.CastSpell(ERSSpell.FERTILE_SOIL);
+  end else if Self.CompostMethod = ECompostMethod.BOTTOMLESS then begin
+    if not Inventory.FindItem('Bottomless compost bucket', slot) then begin
+      WriteLn('Failed to find bottomless compost bucket in inventory.');
+      Exit;
+    end;
+
+    Inventory.SetSelectedSlot(slot);
+  end else begin
+    if not Inventory.FindItem(compostItem, slot) then begin
       WithdrawCompost;
-      Inventory.FindItem(compostItem, slot);
-      if not Self.CurrentPatch.Find then begin
-        WriteLn('Couldn''t find patch to compost!');
+      if not Inventory.FindItem(compostItem, slot) then begin
+        WriteLn('Failed to find compost after withdrawing.');
         Exit;
       end;
     end;
 
-    if (slot = -1) and (not (Inventory.FindItem(compostItem, slot))) then
-      TerminateScript('Out of compost! Terminating.');
-  end;
-
-  if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then begin
-    if Magic.GetSpellBook <> ERSSpellBook.LUNAR then begin
-      if SRL.Dice(80) then
-        Antiban.LoseFocus
-      else if SRL.Dice(50) then
-        Antiban.RandomMouse
-      else
-        Magic.Open;
-      Wait(130*ONE_SECOND); //wait for spellbook swap to timeout incase something broke.
-      if Magic.GetSpellBook <> ERSSpellBook.LUNAR then
-        TerminateScript('Not on the correct spellbook for fertilize soil!');
-    end;
-
-    Magic.ClickSpell(ERSSpell.FERTILE_SOIL);
-  end else if (Inventory.GetSelectedSlot = -1) and (not Inventory.SetSelectedSlot(slot)) then begin
-    WriteLn('Failed to select compost in inventory.');
-    Exit;
+    Inventory.SetSelectedSlot(slot);
   end;
 
   Wait(142, 379);
 
+  XPBar.Read;
   for attempts := 0 to 2 do begin
+    WriteLn('Attempting to hover patch for composting. Attempt ' + ToStr(attempts + 1));
     if attempts = 2 then begin
-      WriteLn('Failed to find correct patch uptext while composting.');
+      WriteLn('Failed too many times to hover patch for composting.');
       Antiban.RandomMouse;
       Wait(142, 379);
       Exit;
     end;
 
-    if not Self.CurrentPatch.Find then
+    if not Self.CurrentPatch.Find then begin
+      Writeln('Failed to find patch.');
       Continue;
-
-    if not Mainscreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
-      if SRL.Dice(65) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
     end;
 
+    if Self.CompostMethod = ECompostMethod.FERTILE_SOIL then begin
+      if not Magic.IsSelected(ERSSpell.FERTILE_SOIL) then begin
+        WriteLn('Fertile soil spell isn''t selected anymore');
+        Exit;
+      end;
+    end else if Inventory.GetSelectedSlot <> slot then begin
+      WriteLn('Compost item isn''t selected anymore');
+      Exit;
+    end;
+
+    if SRL.Dice(65) then
+      Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
+    else
+      Mouse.Move(Self.CurrentPatch.SearchBox);
+
     if MainScreen.IsUpText(Self.CurrentPatch.PlantedUpText) then begin
+      WriteLn('Clicking patch');
       Mouse.Click(MOUSE_LEFT);
       Break;
     end else if ChooseOption.Select(Self.CurrentPatch.PlantedUpText) then begin
+      Writeln('Right click selecting patch.');
       Break;
     end;
     Mouse.RandomMovement;
   end;
 
-  if MainScreen.DidYellowClick then begin
-    WriteLn('FOUND YELLOW CLICK!');
+  if not MainScreen.DidRedClick then begin
+    WriteLn('No red X found!');
     Exit;
   end;
 
-  if not WaitUntil((Chat.FindMessage('trea') or Chat.FindMessage('ming 2')), 50, 6000) then begin
-    WriteLn('WaitUntil failed in composting step.');
-    Exit;
+  T.Init(6000);
+
+  while not T.IsFinished do begin
+    if XPBar.EarnedXP then begin
+      WriteLn('Completed compost by earning xp.');
+      Break;
+    end;
   end;
+
+  if T.IsFinished then begin
+    WriteLn('Failed to confirm composting action.');
+  end;
+
   if SRL.Dice(40) and Self.CleanHerbs then begin
     Self.CleanGrimyHerbs;
 
@@ -1441,6 +1460,7 @@ begin
     end;
   end;
 
+  XPBar.Read;
   for attempts := 0 to 2 do begin
     if attempts = 2 then begin
       WriteLn('Failed to find correct patch uptext or choose option while planting.');
@@ -1453,7 +1473,7 @@ begin
     if not Self.CurrentPatch.Find then
       Continue;
 
-    if not MainScreen.IsUpText(Self.CurrentPatch.EmptyUpText)
+    if (not MainScreen.IsUpText(Self.CurrentPatch.EmptyUpText))
       or (Self.CurrentPatch.Data.PatchType = EPatchType.SEAWEED) then begin
       if SRL.Dice(65) then
         Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
@@ -1462,6 +1482,7 @@ begin
     end;
 
     if (Self.CurrentPatch.Data.PatchType <> EPatchType.HERB)
+     and (Self.CurrentPatch.Data.PatchType <> EPatchType.SEAWEED)
      and (Self.CurrentPatch.PlantedUpText in MainScreen.GetUpText.After('>')) then begin
       if MainScreen.IsUpText(Self.CurrentPatch.HarvestUpText) then
         Self.Harvest
@@ -1500,20 +1521,7 @@ begin
     Exit;
   end;
 
-  if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then begin
-    if (Self.CompostMethod <> ECompostMethod.FERTILE_SOIL) then begin
-      if Inventory.FindItem(compostItem, slot) then
-        Inventory.SetSelectedSlot(slot);
-      Wait(78, 208);
-      if SRL.Dice(95) then
-        Mouse.HumanMove(SRL.RandomPoint(Self.CurrentPatch.SearchBox))
-      else
-        Mouse.Move(Self.CurrentPatch.SearchBox);
-    end;
-  end;
-
-  XPBar.EarnedXP;
-  if WaitUntil(((not Self.CurrentPatch.IsEmpty) or XPBar.EarnedXP), 15, 10000) then begin
+  if WaitUntil(XPBar.EarnedXP, 15, 6000) then begin
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
       Self.CompostPatch
@@ -2297,10 +2305,10 @@ begin
 
     repeat
       if ChatButtons.GetState(ERSChatButton.GAME_CHAT) <> ERSChatButtonState.ENABLED then
-        ChatButtons.ChangeState(ERSChatButton.GAME_CHAT, ERSChatButtonState.ENABLED); 
+        ChatButtons.ChangeState(ERSChatButton.GAME_CHAT, ERSChatButtonState.ENABLED);
 
       if not ChatButtons.IsActive(ERSChatButton.GAME_CHAT) then
-        ChatButtons.Open(ERSChatButton.GAME_CHAT); 
+        ChatButtons.Open(ERSChatButton.GAME_CHAT);
 
       state := Self.CurrentPatch.GetState;
 
@@ -2310,6 +2318,7 @@ begin
       if state <> EPatchState.FAILED then
         failedCount := 0;
 
+      WriteLn('State: ' + ToStr(state));
       case state of
         EPatchState.HARVEST_WHITEBERRIES: Self.HarvestWhiteBerries;
         EPatchState.HARVEST_CACTUS: Self.HarvestCactus;

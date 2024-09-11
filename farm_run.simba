@@ -536,6 +536,15 @@ begin
     Inc(result)
 end;
 
+function TFarmRun.GetTimeForNextRun(): Int32;
+begin
+  if Length(Self.Patches) = 2 then
+    if ('seaweed' in Self.Patches[0].Data.Name) and ('seaweed' in Self.Patches[1].Data.Name) then
+      Exit(Random(46*ONE_MINUTE, 55*ONE_MINUTE));
+
+  Exit(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
+end;
+
 procedure TFarmRun.AddPatch(patch: EFarmPatch; travel: ETravelMethod; seed: TRSItem);
 var
   emptyUpText   : TStringArray := ['Herb', 'Flower', 'Bush', 'Allotment', 'Cactus', 'Seaweed patch'];
@@ -2212,7 +2221,7 @@ begin
       Exit(True);
 end;
 
-procedure TFarmRun.Init();
+procedure TFarmRun.Init(DoRunNow: Boolean = False);
 var
   tmp: TBoxArray;
   i: Int32;
@@ -2269,7 +2278,11 @@ begin
   BargeAttendant.Finder.Colors += CTS2(1911645, 6, 0.08, 0.27);
 
   Self.InactivityTimer.Init(6*ONE_MINUTE);
-  ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
+
+  if DoRunNow then
+    ReadyTimer.Init(0)
+  else
+    ReadyTimer.Init(Self.GetTimeForNextRun());
 
   SetLength(Self.HarvestQuantities, Length(LeprechaunItems));
 end;
@@ -2385,10 +2398,5 @@ procedure TFarmRun.DoFarmRun(); begin
 
   Self.Run;
 
-  ReadyTimer.Init(Random(86*ONE_MINUTE, 97*ONE_MINUTE));
-
-  if Length(Self.Patches) = 2 then begin
-    if ('seaweed' in Self.Patches[0].Data.Name) and ('seaweed' in Self.Patches[1].Data.Name) then
-      ReadyTimer.Init(Random(46*ONE_MINUTE, 55*ONE_MINUTE));
-  end;
+  ReadyTimer.Init(Self.GetTimeForNextRun());
 end;

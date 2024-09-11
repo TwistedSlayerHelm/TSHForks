@@ -1405,6 +1405,7 @@ begin
 
   while not T.IsFinished do begin
     if XPBar.EarnedXP then begin
+      Self.InactivityTimer.Restart;
       WriteLn('Completed compost by earning xp.');
       Break;
     end;
@@ -1431,8 +1432,6 @@ end;
 procedure TFarmRun.Plant();
 var
   slot, attempts  : Int32;
-  compostArray    : TStringArray := ['Compost', 'Supercompost', 'Ultracompost', 'Bottomless compost bucket', ''];
-  compostItem     : TRSItem := compostArray[Self.CompostMethod];
 begin
   if not RSClient.IsLoggedIn then
     Exit;
@@ -1522,6 +1521,7 @@ begin
   end;
 
   if WaitUntil(XPBar.EarnedXP, 15, 6000) then begin
+    Self.InactivityTimer.Restart;
     Wait(338, 562);
     if Self.CurrentPatch.Data.PatchType <> EPatchType.FLOWER then
       Self.CompostPatch
@@ -1610,8 +1610,10 @@ begin
   HarvestTimer.Init(4000);
   while not HarvestTimer.IsFinished do begin
 
-    if XPBar.EarnedXP then
+    if XPBar.EarnedXP then begin
       HarvestTimer.Restart;
+      Self.InactivityTimer.Restart;
+    end;
 
     if Inventory.IsFull then begin
       Inventory.SetSelectedSlot(-1);

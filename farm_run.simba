@@ -1024,12 +1024,7 @@ begin
         if Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) then begin
           b := ([67,399,442,403]);
           Mouse.Click(b, MOUSE_LEFT);
-
-          WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]), 15, 10000);
         end;
-
-        if (ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]) then
-          Break;
 
         if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then
           Chat.ClickContinue(True);
@@ -1040,9 +1035,13 @@ begin
 
           if Chat.FindOption('airin', [CHAT_COLOR_BLACK])then
             Chat.ClickContinue(True);
+        end;
 
-          if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 5000) then
-            Break;
+        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 8000) then begin
+            ScriptWalker^.WalkBlind([1278, 5628]);
+
+        if ScriptWalker^.AtTile([1278, 5628], 12) then
+          Break;
         end;
       end;
     end

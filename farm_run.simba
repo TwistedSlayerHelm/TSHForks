@@ -1037,12 +1037,11 @@ begin
             Chat.ClickContinue(True);
         end;
 
-        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 8000) then begin
-            ScriptWalker^.WalkBlind([1278, 5628]);
+        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 8000) then
+          ScriptWalker^.WalkBlind([1278, 5628]);
 
         if ScriptWalker^.AtTile([1278, 5628], 12) then
           Break;
-        end;
       end;
     end
     else

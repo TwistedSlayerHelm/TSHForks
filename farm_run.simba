@@ -983,18 +983,18 @@ var
   item            : TRSItem         := '';
 begin
   T.init(one_minute);
-
+ 
   while not (MyPos := ScriptWalker^.GetMyPos).InBox([1129, 5407, 1769, 5824]) and not T.IsFinished do
   begin
     MyPos := ScriptWalker^.GetMyPos;
-
+ 
     if MyPos.InBox([8448, 2342, 9273, 2895]) then begin
       for attempts := 1 to 3 do begin
         if not ScriptWalker^.AtTile([8840,2672], 16) then
           ScriptWalker^.WebWalk([8832,2672]);
-
+ 
         BargeAttendant.SelectOption(['Quick-Travel'], 10);
-
+ 
         if WaitUntil(ScriptWalker^.GetMyPos().InBox([9113, 908, 9467, 1266]), 15, 5000) then
           Break;
       end;
@@ -1004,11 +1004,11 @@ begin
       for attempts := 1 to 3 do begin
         Wait(750,1000);
         BoatyShore.WalkSelectOption(['Travel '], 10);
-
+ 
         if WaitUntil(Chat.FindOption('Row out to sea', [CHAT_COLOR_BLACK]), 15, 5000) then begin
           b := ([146,431,371,435]);
           Mouse.Click(b, MOUSE_LEFT);
-
+ 
           if WaitUntil(ScriptWalker^.GetMyPos().InBox([9303, 530, 9657, 888]), 15, 5000) then
             Break;
         end;
@@ -1016,32 +1016,29 @@ begin
     end
     else
     if MyPos.InBox([9303, 530, 9657, 888]) then begin
-      for attempts := 1 to 3 do begin
-        Wait(750,1000);
-        BoatyIsland.WalkSelectOption(['Dive '], 10);
-        WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
-
+      if Chat.HasContinue or (Chat.GetChatTitle.Len > 0) then begin
         if Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) then begin
           b := ([67,399,442,403]);
           Mouse.Click(b, MOUSE_LEFT);
-        end;
-
-        if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then
+          WaitUntil((not Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK])), 15, 5000);
+        end else if Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])then begin
           Chat.ClickContinue(True);
-
-        if Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK]) then begin
+          WaitUntil((not Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK])), 15, 5000);
+        end else if Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK]) then begin
           b := ([120,412,401,421]);
           Mouse.Click(b, MOUSE_LEFT);
-
-          if Chat.FindOption('airin', [CHAT_COLOR_BLACK])then
-            Chat.ClickContinue(True);
+          WaitUntil((not Chat.FindOption('dive anyway', [CHAT_COLOR_BLACK])), 15, 5000);
+        end else if Chat.FindOption('airin', [CHAT_COLOR_BLACK]) then begin
+          Chat.ClickContinue(True);
+          WaitUntil((not Chat.FindOption('airin', [CHAT_COLOR_BLACK])), 15, 5000);
         end;
-
-        if WaitUntil(ScriptWalker^.GetMyPos().InBox([1129, 5407, 1769, 5824]), 15, 8000) then
-          ScriptWalker^.WalkBlind([1278, 5628]);
-
-        if ScriptWalker^.AtTile([1278, 5628], 12) then
+      end else begin
+        try
+          if BoatyIsland.WalkSelectOption(['Dive'], 10) then
+            WaitUntil(Chat.FindOption('Dive and walk', [CHAT_COLOR_BLACK]) or Chat.FindOption('it would be easier', [CHAT_COLOR_BLACK]) or (MyPos := ScriptWalker^.GetMyPos()).InBox([1129, 5407, 1769, 5824]), 15, 10000);
+        except
           Break;
+        end;
       end;
     end
     else
@@ -1054,7 +1051,7 @@ begin
       end
       else
         Equipment.ClickItem(item, 'Digsite');
-
+ 
       WaitUntil(ScriptWalker^.GetMyPos().InBox([8448, 2342, 9273, 2895]), 15, 10000);
     end;
   end;

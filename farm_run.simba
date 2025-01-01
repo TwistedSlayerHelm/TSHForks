@@ -2175,6 +2175,10 @@ begin
   if not WaitUntil((ScriptWalker^.GetMyPos in Self.CurrentPatch.Data.MapCoords), 10, 10000) then
     Exit;
 
+  if TravelMethod = ETravelMethod.ICY_BASALT then begin
+    ScriptWalker^.WalkBlind(Self.CurrentPatch.Data.Coords.Random(8,8));
+  end;
+
   if Inventory.IsFull then
     Self.NoteItems;
 end;

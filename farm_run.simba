@@ -2360,6 +2360,8 @@ begin
 
   Inc(Self.RunsComplete);
 
+  Self.NoteItems();
+
   Antiban.MinZoom := AntibanMinZ;
   Antiban.MaxZoom := AntibanMaxZ;
 

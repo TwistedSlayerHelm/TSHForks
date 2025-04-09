@@ -188,7 +188,7 @@ begin
       {border color}      CTS2(6520971, 8, 0.05, 0.27),
       {soil color}        CTS2(408653, 7, 0.11, 2.64),
       {patch coords}      [6787, 710],
-      {leprechaun coords} [6785, 728],
+      {leprechaun coords} [6785, 724],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Weiss herb',
       {map coords}        [6500,  600, 7000,  800]];
@@ -198,7 +198,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(408653, 7, 0.11, 2.64),
       {patch coords}      [6699, 1670],
-      {leprechaun coords} [6697, 1704],
+      {leprechaun coords} [6688, 1656],
       {leprechaun color}  CTS2(3830139, 13, 0.03, 0.44),
       {name}              'Stronghold herb',
       {map coords}        [6550, 1550, 6850, 1800]];
@@ -208,7 +208,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [6646, 2594],
-      {leprechaun coords} [6653, 2583],
+      {leprechaun coords} [6653, 2580],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby herb',
       {map coords}        [6286, 2351, 6910, 2850]];
@@ -218,7 +218,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [6626, 2594],
-      {leprechaun coords} [6653, 2583],
+      {leprechaun coords} [6653, 2580],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby flower',
       {map coords}        [6286, 2351, 6910, 2850]];
@@ -228,7 +228,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(3431524, 12, 0.05, 0.16),
       {patch coords}      [6644, 2578],
-      {leprechaun coords} [6653, 2583],
+      {leprechaun coords} [6653, 2580],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby north allotment',
       {map coords}        [6286, 2351, 6910, 2850]];
@@ -238,7 +238,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(3431524, 12, 0.05, 0.16),
       {patch coords}      [6646, 2609],
-      {leprechaun coords} [6653, 2583],
+      {leprechaun coords} [6653, 2580],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby south allotment',
       {map coords}        [6286, 2351, 6910, 2850]];
@@ -248,7 +248,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [6075, 2949],
-      {leprechaun coords} [6080, 2923],
+      {leprechaun coords} [6084, 2936],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Ardy herb',
       {map coords}        [5855, 2792, 6286, 3070]];
@@ -258,7 +258,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [6058, 2949],
-      {leprechaun coords} [6080, 2923],
+      {leprechaun coords} [6084, 2936],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Ardy flower',
       {map coords}        [5855, 2792, 6286, 3070]];
@@ -288,7 +288,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [7626, 3202],
-      {leprechaun coords} [7604, 3228],
+      {leprechaun coords} [7616, 3208],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Fally herb',
       {map coords}        [7500, 3100, 7700, 3450]];
@@ -298,7 +298,7 @@ begin
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [7610, 3218],
-      {leprechaun coords} [7604, 3228],
+      {leprechaun coords} [7616, 3208],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Fally flower',
       {map coords}        [7500, 3100, 7700, 3450]];
@@ -308,7 +308,7 @@ begin
       {border color}      CTS2(2646105, 4, 0.14, 0.45),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
       {patch coords}      [9814, 2330],
-      {leprechaun coords} [9780, 2360],
+      {leprechaun coords} [9804, 2328],
       {leprechaun color}  CTS2(2385461, 9, 0.09, 1.08),
       {name}              'Port Phasmatys herb',
       {map coords}        [9385, 2036, 10384, 2680]];
@@ -378,7 +378,7 @@ begin
       {border color}      CTS2(6127499, 7, 0.08, 0.61),
       {soil color}        CTS2(3497831, 7, 0.07, 0.20),
       {patch coords}      [5864, 3546],
-      {leprechaun coords} [5846, 3544],
+      {leprechaun coords} [5870, 3556],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
       {name}              'Monestary bush',
       {map coords}        [5650, 3350, 6050, 3750]];

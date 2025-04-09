@@ -217,7 +217,7 @@ begin
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
       {soil color}        CTS2(2970201, 11, 0.05, 0.25),
-      {patch coords}      [6626, 2594],
+      {patch coords}      [6630, 2594],
       {leprechaun coords} [6653, 2580],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
       {name}              'Catherby flower',

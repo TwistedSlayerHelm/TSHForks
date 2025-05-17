@@ -206,7 +206,7 @@ begin
   PatchData += [    {Catherby/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [6646, 2594],
       {leprechaun coords} [6653, 2583],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -216,7 +216,7 @@ begin
   PatchData += [    {Catherby/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [6630, 2594],
       {leprechaun coords} [6653, 2583],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -246,7 +246,7 @@ begin
   PatchData += [    {Ardy/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3893618, 8, 0.06, 0.14),
       {patch coords}      [6075, 2949],
       {leprechaun coords} [6080, 2923],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -256,7 +256,7 @@ begin
   PatchData += [    {Ardy/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3893618, 8, 0.06, 0.14),
       {patch coords}      [6058, 2949],
       {leprechaun coords} [6080, 2923],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -266,7 +266,7 @@ begin
   PatchData += [    {Hosidious/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(6127499, 6, 0.10, 0.71),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [2346, 2258],
       {leprechaun coords} [2357, 2252],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -276,7 +276,7 @@ begin
   PatchData += [    {Hosidious/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [2331, 2242],
       {leprechaun coords} [2357, 2252],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -286,7 +286,7 @@ begin
   PatchData += [    {Fally/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3762031, 9, 0.08, 0.16),
       {patch coords}      [7626, 3202],
       {leprechaun coords} [7604, 3228],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -296,7 +296,7 @@ begin
   PatchData += [    {Fally/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3762031, 9, 0.08, 0.16)
       {patch coords}      [7610, 3218],
       {leprechaun coords} [7604, 3228],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
@@ -306,7 +306,7 @@ begin
   PatchData += [    {Phasmatys/herb}
       {patch type}        EPatchType.HERB,
       {border color}      CTS2(2646105, 4, 0.14, 0.45),
-      {soil color}        CTS2(2970201, 11, 0.05, 0.25),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [9814, 2330],
       {leprechaun coords} [9780, 2360],
       {leprechaun color}  CTS2(2385461, 9, 0.09, 1.08),
@@ -326,7 +326,7 @@ begin
   PatchData += [    {Guild/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
-      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [434, 1558],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -336,7 +336,7 @@ begin
   PatchData += [    {Guild/north allotment}
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
-      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [461, 1530],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -346,7 +346,7 @@ begin
   PatchData += [    {Guild/south allotment}
       {patch type}        EPatchType.ALLOTMENT,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
-      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [463, 1552],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -356,7 +356,7 @@ begin
   PatchData += [    {Guild/bush}
       {patch type}        EPatchType.BUSH,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
-      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [434, 1527],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -366,7 +366,7 @@ begin
   PatchData += [    {Guild/cactus}
       {patch type}        EPatchType.CACTUS,
       {border color}      CTS2(5332322, 17, 0.14, 0.10),
-      {soil color}        CTS2(2972511, 10, 0.53, 0.59),
+      {soil color}        CTS2(3299681, 11, 0.06, 0.16),
       {patch coords}      [450, 1470],
       {leprechaun coords} [440, 1536],
       {leprechaun color}  CTS2(2782782, 5, 0.13, 1.58),
@@ -402,7 +402,7 @@ begin
       {leprechaun color}  CTS2(6189902, 6, 0.52, 0.52),
       {name}              'Giant seaweed south',
       {map coords}        [1129, 5407, 1769, 5824]];
-end;
+end;   
 
 procedure TerminateScript(Reason: String); override; begin
   WriteLn(Reason);

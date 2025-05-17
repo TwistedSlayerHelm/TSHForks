@@ -296,7 +296,7 @@ begin
   PatchData += [    {Fally/limp}
       {patch type}        EPatchType.FLOWER,
       {border color}      CTS2(5927804, 9, 0.05, 0.11),
-      {soil color}        CTS2(3762031, 9, 0.08, 0.16)
+      {soil color}        CTS2(3762031, 9, 0.08, 0.16),
       {patch coords}      [7610, 3218],
       {leprechaun coords} [7604, 3228],
       {leprechaun color}  CTS2(3108159, 13, 0.08, 1.39),
